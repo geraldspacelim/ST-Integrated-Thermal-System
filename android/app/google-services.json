@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1092786728684",
+    "firebase_url": "https://facial-scanner.firebaseio.com",
+    "project_id": "facial-scanner",
+    "storage_bucket": "facial-scanner.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1092786728684:android:7053f5421db99cbe823fc9",
+        "android_client_info": {
+          "package_name": "com.example.facial_capture"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1092786728684-1iql9fad8gs93vg9og52u87p4opt8nic.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAbUFZdYycIhJpKYqd2R7wAHRqo1rbW_KE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1092786728684-1iql9fad8gs93vg9og52u87p4opt8nic.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
