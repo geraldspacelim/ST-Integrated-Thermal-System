@@ -84,7 +84,7 @@ void _showEditPanel(Profile profile){
                   ),
                   SizedBox(height: 3.0),
                   Text(
-                    profiles[index].temperature.toString() + "°C", 
+                    profiles[index].temperature.toStringAsFixed(1) + "°C", 
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: 15,

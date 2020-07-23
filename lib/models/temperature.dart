@@ -1,6 +1,6 @@
 class Temperature {
-  final String temperature; 
-  final String datetime;
+  final double temperature; 
+  final int datetime;
   final String remarks; 
 
   Temperature({this.temperature, this.datetime, this.remarks});

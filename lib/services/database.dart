@@ -1,5 +1,6 @@
 import 'package:facial_capture/models/profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:facial_capture/models/temperature.dart';
 
 class DatabaseService {
 
@@ -15,18 +16,26 @@ class DatabaseService {
   //   });
   // }
 
-  Future updateDatabase (String uid, String newTemperature, String newTimeTaken, String remarks) async {
-    await profileCollection.document(uid).setData({
-      'maunual_temperature': newTemperature, 
-      'manual_datetime': int.parse(newTimeTaken), 
-      'remarks': remarks, 
-    });
+  Future updateDatabase (String uid, double newTemperature, int newTimeTaken, String remarks) async {
+    final DocumentReference postRef = Firestore.instance.collection('profiles').document(uid);
+    Firestore.instance.runTransaction((Transaction tx) async {
+    DocumentSnapshot postSnapshot = await tx.get(postRef);
+    if (postSnapshot.exists) {
+      await tx.update(postRef, <String, dynamic>{'manual_datetime': postSnapshot.data['datetime'], 
+                                                 'manual_remakrs': remarks, 
+                                                 'manual_temperature': postSnapshot.data['temperature'], 
+                                                 'temperature': newTemperature,
+                                                 'datetime': newTimeTaken, 
+      });
+    }
+  });
   }
 
   // profiles snapshot 
   List <Profile> _profileListFromSnapshot(QuerySnapshot querySnapshot) {
     return querySnapshot.documents.map((doc) {
       return Profile(
+        uid: doc.data['uid'],
         name: doc.data['name'],
         datetime: doc.data['datetime'], 
         camera_number: doc.data['camera_number'],
@@ -36,7 +45,8 @@ class DatabaseService {
         array: doc.data['array'],
         location: doc.data['location'],
         manual_datetime: doc.data['manual_datetime'],
-        manual_temperature: doc.data['manual_temperature']
+        manual_temperature: doc.data['manual_temperature'],
+        manual_remarks: doc.data['manual_remarks']
       );
     }).toList();
   }

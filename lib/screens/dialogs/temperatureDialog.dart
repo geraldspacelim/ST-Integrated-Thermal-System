@@ -6,20 +6,22 @@ import 'package:intl/intl.dart';
 
 class TemperatureDialog extends StatefulWidget {
   double temperature; 
-  TemperatureDialog({this.temperature});
+  String remarks; 
+  TemperatureDialog({this.temperature, this.remarks});
   @override
   _TemperatureDialogState createState() => _TemperatureDialogState();
 }
 
 class _TemperatureDialogState extends State<TemperatureDialog> {
   double _temperature;
-  String _remarks = ""; 
+  String _remarks; 
   int _datetime = 0; 
   Timer _timer;
-
+  
   @override
   void initState() {
     _temperature = widget.temperature;
+    _remarks = widget.remarks;
     super.initState();
   }
   @override
@@ -133,8 +135,14 @@ class _TemperatureDialogState extends State<TemperatureDialog> {
           padding: const EdgeInsets.fromLTRB(10,0,10,0),
           child: TextField(
                   maxLines: 3,
+                  maxLength: 100,
                   decoration: InputDecoration(
-                      hintText: "Additional Remarks (Optional)",
+                      hintText: _remarks == '' ? 'Additional Remarks' : _remarks,
+                      hintStyle: TextStyle(
+                          fontSize: 15.0,
+                          color: Colors.black54
+                      ),
+                      // hintText: "Additional Remarks (Optional)",
                       border: OutlineInputBorder(),
                   ),
                   onChanged: (text) {
@@ -181,7 +189,7 @@ class _TemperatureDialogState extends State<TemperatureDialog> {
                   child: InkWell(
                     splashColor: Colors.grey, // splash color
                     onTap: () {
-                      Navigator.pop(context, new Temperature(temperature: _temperature.toStringAsFixed(1), datetime: DateFormat.yMd().add_Hm().format(DateTime.now()).toString(), remarks: _remarks));
+                      Navigator.pop(context, new Temperature(temperature: double.parse(_temperature.toStringAsFixed(1)), datetime: DateTime.now().millisecondsSinceEpoch, remarks: _remarks));
                     }, // button pressed
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
