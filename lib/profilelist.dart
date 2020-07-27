@@ -10,7 +10,6 @@ class ProfileList extends StatefulWidget {
 }
 
 class _ProfileListState extends State<ProfileList> {
-
 void _showEditPanel(Profile profile){
     showModalBottomSheet(
       backgroundColor:  Colors.transparent,

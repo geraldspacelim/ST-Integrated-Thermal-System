@@ -51,13 +51,7 @@ class DatabaseService {
     }).toList();
   }
 
-  Stream <List<Profile>> profileDataArray1(String sortType, String array) {
-    return profileCollection.orderBy(sortType, descending: true).where('array', isEqualTo: array).snapshots().map(_profileListFromSnapshot);
-
-    // if (sortType == 'temperature' && array == 1) {
-    //   return profileCollection.where('array', isEqualTo: array).orderBy('temperature', descending: true).snapshots().map(_profileListFromSnapshot);
-    // } else if (sortType == 'temperature' && array == 2) {
-    //   return profileCollection.where('array', isEqualTo: array).orderBy('temperature', descending: true).snapshots().map(_profileListFromSnapshot); 
-    // }  
+  Stream <List<Profile>> profileDataArray1(String array, String filter, String sort) {
+    return profileCollection.orderBy(filter, descending: sort == 'descending' ? true : false).where('array', isEqualTo: array).snapshots().map(_profileListFromSnapshot);
   }
 }

@@ -21,15 +21,23 @@ class GradientAppBar extends StatelessWidget implements PreferredSizeWidget{
           ]
         )
       ),
-      child: Text(
-        title, 
-        style: TextStyle(
-          color: Colors.white,
-          letterSpacing: 10.0,
-          fontSize: 30.0
-        )
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'ST FEVER SCANNER',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w900,
+              fontStyle: FontStyle.italic,
+              fontFamily: 'Open Sans',
+              fontSize: 55,
+              letterSpacing: 1.5
+            ),
+          ),
+          // SizedBox(width: 10,),
+        ],
       ),
-      
     );
   }
 
