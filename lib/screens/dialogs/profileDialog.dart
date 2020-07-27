@@ -506,16 +506,6 @@ class _ProfileDialogState extends State<ProfileDialog> {
           child: Container(
             height: 50,
             width: 50, // 
-              decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                    color: Colors.black.withOpacity(0.5),
-                    spreadRadius: 1,
-                    blurRadius: 10,
-                    offset: Offset(4, 1), // changes position of shadow
-                  ),
-                  ],
-              ),
               child: ClipOval(
                 child: Material(
                   color: Color(0xFF00D963), // button color
@@ -523,6 +513,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
                     splashColor: Colors.grey, // splash color
                     onTap: () async {
                       await DatabaseService().updateDatabase(widget.profile.uid, _currentTemperature, _currentDatetime, _currentRemarks);
+                      Navigator.pop(context);
                     }, // button pressed
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -544,16 +535,6 @@ class _ProfileDialogState extends State<ProfileDialog> {
           child: Container(
             height: 50,
             width: 50, // 
-              decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                    color: Colors.black.withOpacity(0.5),
-                    spreadRadius: 1,
-                    blurRadius: 10,
-                    offset: Offset(4, 1), // changes position of shadow
-                  ),
-                  ],
-              ),
               child: ClipOval(
                 child: Material(
                   color: Colors.red, // button color

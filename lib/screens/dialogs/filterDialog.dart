@@ -1,5 +1,8 @@
 import 'package:facial_capture/models/filter.dart';
-import 'package:flutter/material.dart'; 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+// import 'package:flutter_datetime_picker/flutter_datetime_picker.dart'; 
+
 
 class FilterPage extends StatefulWidget {
   @override
@@ -8,16 +11,33 @@ class FilterPage extends StatefulWidget {
 
 class _FilterPageState extends State<FilterPage> {
   String _array; 
-  String _filter; 
-  String _sort;
+  String _temperature; 
+  String _datetime;
+  double _time = 20.0;
+  String _date = "Not set";
+  DateTime selectedDate = DateTime.now();
 
   @override
   void initState() {
-    _array = '1';
-    _filter = 'temperature';
-    _sort  = 'ascending'; 
+    _array = 'default';
+    _temperature = 'default';
+    _datetime = 'default'; 
+    // _sort  = 'ascending'; 
     super.initState();
   }
+
+  Future<Null> _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime(2101));
+    if (picked != null && picked != selectedDate)
+      setState(() {
+        selectedDate = picked;
+      });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,9 +55,9 @@ class _FilterPageState extends State<FilterPage> {
               Navigator.pop(context, new Filter(array: null, filter: null, sort: null)); 
             },
           ),
-          SizedBox(height: 20,),
+          SizedBox(height: 10,),
            Text(
-             'Filter And Sort',
+             'Filter And Sort By:',
              style: TextStyle(
                fontSize: 50,
                fontWeight: FontWeight.bold,
@@ -54,7 +74,13 @@ class _FilterPageState extends State<FilterPage> {
              ),
            ),
              RadioListTile(
-              title: const Text('Array 1'),
+              title: const Text(
+                'Gate Array 1',
+                style: TextStyle(
+                  fontWeight: FontWeight.w300,
+                  letterSpacing: 1
+                ),
+              ),
               value: "1",
               activeColor: Colors.blue,
               groupValue: _array,
@@ -65,7 +91,13 @@ class _FilterPageState extends State<FilterPage> {
               },
             ),
              RadioListTile(
-              title: const Text('Array 2'),
+              title: const Text(
+                'Gate Array 2',
+                style: TextStyle(
+                  fontWeight: FontWeight.w300,
+                  letterSpacing: 1
+                ),
+              ),
               value: "2",
               activeColor: Colors.blue,
               groupValue: _array,
@@ -76,7 +108,13 @@ class _FilterPageState extends State<FilterPage> {
               },
             ),
             RadioListTile(
-              title: const Text('Default'),
+              title: const Text(
+                'All',
+                style: TextStyle(
+                  fontWeight: FontWeight.w300,
+                  letterSpacing: 1
+                ),
+              ),
               value: "default",
               activeColor: Colors.blue,
               groupValue: _array,
@@ -86,7 +124,7 @@ class _FilterPageState extends State<FilterPage> {
                 });
               },
             ), 
-            SizedBox(height: 15,),
+            SizedBox(height: 10,),
             const Divider(
               color: Colors.grey,
               // height: 20,
@@ -94,9 +132,9 @@ class _FilterPageState extends State<FilterPage> {
               endIndent: 20,
               thickness: 1,
             ),
-            SizedBox(height: 15,),
+            SizedBox(height: 10,),
           Text(
-             'Filter',
+             'Temperature',
              style: TextStyle(
                fontSize: 30,
                fontWeight: FontWeight.bold,
@@ -104,28 +142,57 @@ class _FilterPageState extends State<FilterPage> {
              ),
            ),
            RadioListTile(
-              title: const Text('Temperature'),
-              value: "temperature",
+              title: const Text(
+                'Temperature above threshold value',
+                style: TextStyle(
+                  fontWeight: FontWeight.w300,
+                  letterSpacing: 1
+                ),
+              ),
+              value: "danger",
               activeColor: Colors.blue,
-              groupValue: _filter,
+              groupValue: _temperature,
               onChanged: (value) {
                 setState(() {
-                  _filter = value;
+                  _temperature = value;
                 });
               },
             ),
             RadioListTile(
-              title: const Text('Datetime'),
-              value: "datetime",
+              title: const Text(
+                'Temperature below threshold value',
+                style: TextStyle(
+                  fontWeight: FontWeight.w300,
+                  letterSpacing: 1
+                ),
+              ),
+              value: "safe",
               activeColor: Colors.blue,
-              groupValue: _filter,
+              groupValue: _temperature,
               onChanged: (value) {
                 setState(() {
-                  _filter = value;
+                  _temperature = value;
                 });
               },
             ),
-              SizedBox(height: 15,),
+             RadioListTile(
+              title: const Text(
+                'All',
+                 style: TextStyle(
+                  fontWeight: FontWeight.w300,
+                  letterSpacing: 1
+                ),
+              ),
+              value: "default",
+              activeColor: Colors.blue,
+              groupValue: _temperature,
+              onChanged: (value) {
+                setState(() {
+                  _temperature = value;
+                });
+              },
+            ),
+              SizedBox(height: 10,),
             const Divider(
               color: Colors.grey,
               // height: 20,
@@ -133,38 +200,125 @@ class _FilterPageState extends State<FilterPage> {
               endIndent: 20,
               thickness: 1,
             ),
-            SizedBox(height: 15,),
+            SizedBox(height: 10,),
             Text(
-             'Sort',
+             'Datetime',
              style: TextStyle(
                fontSize: 30,
                fontWeight: FontWeight.bold,
                letterSpacing: 1
              ),
            ),
+            RadioListTile(
+              value: _time.toStringAsFixed(0),
+              activeColor: Colors.blue,
+              groupValue: _datetime,
+              onChanged: (value) {
+                setState(() {
+                  _datetime = value;
+                });
+              },
+                title: Row(
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: 
+                      Text(
+                        "Show records " + _time.toStringAsFixed(0) + " minutes ago:",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w300,
+                          letterSpacing: 1
+                        ),
+                      )
+                  ),
+                  Expanded(
+                      flex: 5,
+                      child: Slider(
+                      value: _time,
+                      activeColor: Colors.black,
+                      inactiveColor: Colors.grey,
+                      min: 20,
+                      max: 60,
+                      divisions: 8,
+                      label: _time.toStringAsFixed(0) + " Mins",
+                      onChanged: (val) => setState(() => _time = val),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            RadioListTile(
+              value: 'test',
+              activeColor: Colors.blue,
+              groupValue: _datetime,
+              onChanged: (value) {
+                setState(() {
+                  _datetime = value;
+                });
+              },
+              title: Row(
+                children: [
+                  Container(
+                    width: 250,
+                    height: 40,
+                    child: RaisedButton(
+                        color: Colors.white,
+                        onPressed: () => {
+                          _selectDate(context)
+                        },
+                        shape: RoundedRectangleBorder(
+                           side: BorderSide(color: Colors.black, width: 1),
+                           
+                        borderRadius: BorderRadius.circular(5.0)),
+                        elevation: 4.0,
+                        child: Row(
+                        children: <Widget>[
+                          Icon(
+                            Icons.date_range,
+                            size: 15,
+                            color: Colors.black,
+                          ),
+                          Text(
+                            " " + "${selectedDate.toLocal()}".split(' ')[0],
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w300,
+                                fontSize: 15.0),
+                          ),
+                          SizedBox(width: 70,),
+                          Text(
+                            'Change',
+                            style: TextStyle(
+                              color: Colors.black,
+                                fontWeight: FontWeight.w300,
+                                fontSize: 15.0),
+                            ),
+                    
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
              RadioListTile(
-              title: const Text('Ascending'),
-              value: "ascending",
+              title: const Text(
+                'Default (30 minutes before)',
+                 style: TextStyle(
+                  fontWeight: FontWeight.w300,
+                  letterSpacing: 1
+                ),
+              ),
+              value: "default",
               activeColor: Colors.blue,
-              groupValue: _sort,
+              groupValue: _datetime,
               onChanged: (value) {
                 setState(() {
-                  _sort = value;
+                  _datetime = value;
                 });
               },
             ),
-              RadioListTile(
-              title: const Text('Descending'),
-              value: "descending",
-              activeColor: Colors.blue,
-              groupValue: _sort,
-              onChanged: (value) {
-                setState(() {
-                  _sort = value;
-                });
-              },
-            ),
-            SizedBox(height: 100,),
+            SizedBox(height: 20,),
              Center(
                child: Container(
                  width: 600,
@@ -174,7 +328,7 @@ class _FilterPageState extends State<FilterPage> {
                     borderRadius: BorderRadius.circular(5.0),
                     side: BorderSide(color: Colors.red)),
                   onPressed: () {
-                    Navigator.pop(context, new Filter(array: _array, filter: _filter, sort: _sort)); 
+                    // Navigator.pop(context, new Filter(array: _array, filter: _filter, sort: _sort)); 
                   },
                   color: Colors.red,
                   textColor: Colors.white,

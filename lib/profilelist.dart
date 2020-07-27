@@ -42,6 +42,7 @@ void _showEditPanel(Profile profile){
               // builder: (BuildContext context) => ProfileDialog(profile: profiles[index]),
             ),
             child: Card(
+              elevation: 3,
               color: profiles[index].temperature <= 37.5 ?  Color(0xFF00D963) : Color(0xFFF32013),
               shape: RoundedRectangleBorder(
                 side:  BorderSide(

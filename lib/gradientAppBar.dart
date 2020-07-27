@@ -25,7 +25,7 @@ class GradientAppBar extends StatelessWidget implements PreferredSizeWidget{
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'ST FEVER SCANNER',
+            'AFC FEVER SCANNER',
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.w900,
