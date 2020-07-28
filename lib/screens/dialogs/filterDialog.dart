@@ -14,8 +14,9 @@ class _FilterPageState extends State<FilterPage> {
   String _temperature; 
   String _datetime;
   double _time = 20.0;
-  String _date = "Not set";
+  String _dateDisplay = DateTime.now().toString().split(' ')[0];
   DateTime selectedDate = DateTime.now();
+  String _datetimeValue;
 
   @override
   void initState() {
@@ -34,7 +35,8 @@ class _FilterPageState extends State<FilterPage> {
         lastDate: DateTime(2101));
     if (picked != null && picked != selectedDate)
       setState(() {
-        selectedDate = picked;
+        _datetimeValue = picked.millisecondsSinceEpoch.toString();
+        _dateDisplay = picked.toLocal().toString().split(' ')[0]; 
       });
   }
 
@@ -52,14 +54,14 @@ class _FilterPageState extends State<FilterPage> {
             iconSize: 30,
             color: Colors.black,
             onPressed: () {
-              Navigator.pop(context, new Filter(array: null, filter: null, sort: null)); 
+              Navigator.pop(context, new Filter(array: null, temperature: null, datetime: null)); 
             },
           ),
           SizedBox(height: 10,),
            Text(
              'Filter And Sort By:',
              style: TextStyle(
-               fontSize: 50,
+               fontSize: 35,
                fontWeight: FontWeight.bold,
                letterSpacing: 1.5
              ),
@@ -68,7 +70,7 @@ class _FilterPageState extends State<FilterPage> {
            Text(
              'View',
              style: TextStyle(
-               fontSize: 30,
+               fontSize: 25,
                fontWeight: FontWeight.bold,
                letterSpacing: 1
              ),
@@ -107,6 +109,23 @@ class _FilterPageState extends State<FilterPage> {
                 });
               },
             ),
+             RadioListTile(
+              title: const Text(
+                'Split Gate Arrays',
+                style: TextStyle(
+                  fontWeight: FontWeight.w300,
+                  letterSpacing: 1
+                ),
+              ),
+              value: "split",
+              activeColor: Colors.blue,
+              groupValue: _array,
+              onChanged: (value) {
+                setState(() {
+                  _array = value;
+                });
+              },
+            ),
             RadioListTile(
               title: const Text(
                 'All',
@@ -124,7 +143,7 @@ class _FilterPageState extends State<FilterPage> {
                 });
               },
             ), 
-            SizedBox(height: 10,),
+            SizedBox(height: 5,),
             const Divider(
               color: Colors.grey,
               // height: 20,
@@ -132,11 +151,11 @@ class _FilterPageState extends State<FilterPage> {
               endIndent: 20,
               thickness: 1,
             ),
-            SizedBox(height: 10,),
+            SizedBox(height: 5,),
           Text(
              'Temperature',
              style: TextStyle(
-               fontSize: 30,
+               fontSize: 25,
                fontWeight: FontWeight.bold,
                letterSpacing: 1
              ),
@@ -192,7 +211,7 @@ class _FilterPageState extends State<FilterPage> {
                 });
               },
             ),
-              SizedBox(height: 10,),
+              SizedBox(height: 5,),
             const Divider(
               color: Colors.grey,
               // height: 20,
@@ -200,11 +219,11 @@ class _FilterPageState extends State<FilterPage> {
               endIndent: 20,
               thickness: 1,
             ),
-            SizedBox(height: 10,),
+            SizedBox(height: 5,),
             Text(
              'Datetime',
              style: TextStyle(
-               fontSize: 30,
+               fontSize: 25,
                fontWeight: FontWeight.bold,
                letterSpacing: 1
              ),
@@ -248,7 +267,7 @@ class _FilterPageState extends State<FilterPage> {
               ),
             ),
             RadioListTile(
-              value: 'test',
+              value: _datetimeValue,
               activeColor: Colors.blue,
               groupValue: _datetime,
               onChanged: (value) {
@@ -258,43 +277,56 @@ class _FilterPageState extends State<FilterPage> {
               },
               title: Row(
                 children: [
-                  Container(
-                    width: 250,
-                    height: 40,
-                    child: RaisedButton(
-                        color: Colors.white,
-                        onPressed: () => {
-                          _selectDate(context)
-                        },
-                        shape: RoundedRectangleBorder(
-                           side: BorderSide(color: Colors.black, width: 1),
-                           
-                        borderRadius: BorderRadius.circular(5.0)),
-                        elevation: 4.0,
-                        child: Row(
-                        children: <Widget>[
-                          Icon(
-                            Icons.date_range,
-                            size: 15,
-                            color: Colors.black,
-                          ),
-                          Text(
-                            " " + "${selectedDate.toLocal()}".split(' ')[0],
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w300,
-                                fontSize: 15.0),
-                          ),
-                          SizedBox(width: 70,),
-                          Text(
-                            'Change',
-                            style: TextStyle(
+                  Expanded(
+                    flex: 3,
+                      child: Text(
+                      'Show records on:', 
+                      style: TextStyle(
+                        fontWeight: FontWeight.w300,
+                        letterSpacing: 1
+                      )
+                    ),
+                  ),
+                  Expanded(
+                    flex: 5,
+                      child: Container(
+                      // width: 200,
+                      height: 40,
+                      child: RaisedButton(
+                          color: Colors.white,
+                          onPressed: () => {
+                            _selectDate(context)
+                          },
+                          shape: RoundedRectangleBorder(
+                             side: BorderSide(color: Colors.black, width: 1),
+                             
+                          borderRadius: BorderRadius.circular(5.0)),
+                          elevation: 4.0,
+                          child: Row(
+                          children: <Widget>[
+                            Icon(
+                              Icons.date_range,
+                              size: 15,
                               color: Colors.black,
-                                fontWeight: FontWeight.w300,
-                                fontSize: 15.0),
                             ),
-                    
-                        ],
+                            Text(
+                              " $_dateDisplay",             
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w300,
+                                  fontSize: 15.0),
+                            ),
+                            SizedBox(width: 115,),
+                            Text(
+                              'Change',
+                              style: TextStyle(
+                                color: Colors.black,
+                                  fontWeight: FontWeight.w300,
+                                  fontSize: 15.0),
+                              ),
+                      
+                          ],
+                        ),
                       ),
                     ),
                   )
@@ -303,7 +335,7 @@ class _FilterPageState extends State<FilterPage> {
             ),
              RadioListTile(
               title: const Text(
-                'Default (30 minutes before)',
+                'All',
                  style: TextStyle(
                   fontWeight: FontWeight.w300,
                   letterSpacing: 1
@@ -328,7 +360,11 @@ class _FilterPageState extends State<FilterPage> {
                     borderRadius: BorderRadius.circular(5.0),
                     side: BorderSide(color: Colors.red)),
                   onPressed: () {
-                    // Navigator.pop(context, new Filter(array: _array, filter: _filter, sort: _sort)); 
+                    // print(_array);
+                    // print(_temperature);
+                    // print(_datetime);
+                  
+                    Navigator.pop(context, new Filter(array: _array, temperature: _temperature, datetime: _datetime)); 
                   },
                   color: Colors.red,
                   textColor: Colors.white,

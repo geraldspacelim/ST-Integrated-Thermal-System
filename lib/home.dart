@@ -1,10 +1,10 @@
-import 'package:facial_capture/gradientAppBar.dart';
 import 'package:facial_capture/models/filter.dart';
 import 'package:facial_capture/models/profile.dart';
 import 'package:facial_capture/profilelist.dart';
 import 'package:facial_capture/screens/dialogs/filterDialog.dart';
+import 'package:facial_capture/screens/dialogs/splitArray.dart';
 import 'package:facial_capture/services/database.dart';
-import 'package:facial_capture/widgets/loading.dart';
+import 'package:facial_capture/widgets/gradientAppBar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,9 +14,9 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  String _array = '1';
-  String _filter = 'temperature'; 
-  String _sort = 'descending'; 
+  String _array = 'default';
+  String _tempertaure = 'default'; 
+  String _datetime = 'default'; 
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class _HomeState extends State<Home> {
       appBar: GradientAppBar(
         title: 'FEVER DETECTION SYSTEM',
         gradientBegin: Color(0xff43cea2),
-        gradientEnd: Color(0xff185a9d)
+        gradientEnd: Color(0xff185a9d),
       ),
       floatingActionButton: FloatingActionButton(
        onPressed: () async {
@@ -34,10 +34,14 @@ class _HomeState extends State<Home> {
           context,
           MaterialPageRoute(builder: (context) => FilterPage()),
         );
+        print(filter.array);
+        print(filter.temperature);
+        print(filter.datetime);
+        
         setState(() {
           _array = filter.array == null ? _array : filter.array; 
-          _filter = filter.filter  == null ? _array : filter.filter;
-          _sort = filter.sort  == null ? _array : filter.sort; 
+          _tempertaure = filter.temperature  == null ? _array : filter.temperature;
+          _datetime = filter.datetime  == null ? _array : filter.datetime; 
         });
        },
         child: Icon(
@@ -46,33 +50,17 @@ class _HomeState extends State<Home> {
           ),
         backgroundColor: Colors.white,
       ),
-      body: SafeArea(
-        child: Column(
+      body: _array == 'split' ? SplitArray(filter: new Filter(array: _array, temperature: _tempertaure, datetime: _datetime)) : SafeArea(
+         child: Column( 
           children: [
             Container(
-              height: MediaQuery.of(context).size.height / 2.3,
               child: StreamProvider<List<Profile>>.value(
-                value: DatabaseService().profileDataArray1('1', _filter, _sort), 
+                value: DatabaseService().profileData(_array, _tempertaure, _datetime), 
                 child: ProfileList(),
               ),
             ),
-            // SizedBox(height: MediaQuery.of(context).size.height/4),
-             const Divider(
-              color: Colors.white,
-              // height: 20,
-              indent: 15,
-              endIndent: 15,
-              thickness: 3,
-            ),
-            Container(
-              height:  MediaQuery.of(context).size.height / 2.3,
-              child: StreamProvider<List<Profile>>.value(
-                value: DatabaseService().profileDataArray1('2', _filter, _sort), 
-                child: ProfileList(),
-              ),
-            )
-          ],
-        ),
+          ]
+         )
       )
     );
   }

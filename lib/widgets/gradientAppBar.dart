@@ -14,6 +14,13 @@ class GradientAppBar extends StatelessWidget implements PreferredSizeWidget{
       height: _preferredHeight,
       alignment: Alignment.center,
       decoration: BoxDecoration(
+      boxShadow: [
+          BoxShadow(
+            color: Colors.grey,
+            offset: Offset(0.0, 1.0), //(x,y)
+            blurRadius: 6.0,
+          ),
+        ],
         gradient: LinearGradient(
           colors: <Color> [
             gradientBegin, 

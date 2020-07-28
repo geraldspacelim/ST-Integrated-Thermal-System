@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:facial_capture/models/profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:facial_capture/models/temperature.dart';
+import 'package:intl/intl.dart';
 
 class DatabaseService {
 
@@ -33,7 +36,7 @@ class DatabaseService {
 
   // profiles snapshot 
   List <Profile> _profileListFromSnapshot(QuerySnapshot querySnapshot) {
-    return querySnapshot.documents.map((doc) {
+    List <Profile> listOfProfiles =  querySnapshot.documents.map((doc) {
       return Profile(
         uid: doc.data['uid'],
         name: doc.data['name'],
@@ -49,9 +52,32 @@ class DatabaseService {
         manual_remarks: doc.data['manual_remarks']
       );
     }).toList();
+    return (listOfProfiles);
   }
 
-  Stream <List<Profile>> profileDataArray1(String array, String filter, String sort) {
-    return profileCollection.orderBy(filter, descending: sort == 'descending' ? true : false).where('array', isEqualTo: array).snapshots().map(_profileListFromSnapshot);
+  Stream <List<Profile>> profileData(String array, String temperature, String datetime) {
+    print(array); 
+    print(temperature);
+    print(datetime);
+    int milliseconds = 0;
+    int currentMillieseconds = 0;
+    if (datetime != 'default') {
+       milliseconds = int.parse(datetime);
+       currentMillieseconds = int.parse(DateTime.now().millisecondsSinceEpoch.toString());
+    }
+    if (temperature == 'default' && datetime == 'default' && array == 'default') {
+      return profileCollection.orderBy('datetime', descending: true).snapshots().map(_profileListFromSnapshot);
+    } else if (temperature == 'safe' && array == 'default') {
+      return profileCollection.where('temperature', isLessThan: 37.5).orderBy('temperature', descending: true).orderBy('datetime', descending : true).snapshots().map(_profileListFromSnapshot);
+    }  else if (temperature == 'danger' && array == 'default') {
+      return profileCollection.where('temperature', isGreaterThanOrEqualTo: 37.5).orderBy('temperature', descending: false).orderBy('datetime', descending : true).snapshots().map(_profileListFromSnapshot);
+    } else if (milliseconds <= 60 && array == 'default' && temperature == 'default') {
+      return profileCollection.where('datetime', isGreaterThanOrEqualTo: currentMillieseconds - milliseconds * 60000).orderBy('datetime', descending: true).snapshots().map(_profileListFromSnapshot);
+    } else if (milliseconds > 60 && array == 'default' && temperature == 'default') {
+      return profileCollection.where('datetime', isGreaterThanOrEqualTo: milliseconds).where('datetime', isLessThanOrEqualTo: milliseconds + 86400000).orderBy('datetime', descending: true).snapshots().map(_profileListFromSnapshot);
+    } else if (temperature == 'default' && datetime == 'default') {
+      return profileCollection.where('array', isEqualTo: array).orderBy('array').orderBy('datetime', descending: true).snapshots().map(_profileListFromSnapshot);
+    }
+
   }
 }

@@ -1,7 +1,7 @@
 class Filter {
   String array; 
-  String filter; 
-  String sort; 
+  String temperature; 
+  String datetime; 
 
-  Filter({this.array, this.filter, this.sort}); 
+  Filter({this.array, this.temperature, this.datetime}); 
 }
