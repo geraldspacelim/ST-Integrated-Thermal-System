@@ -16,7 +16,7 @@ class GradientAppBar extends StatelessWidget implements PreferredSizeWidget{
       decoration: BoxDecoration(
       boxShadow: [
           BoxShadow(
-            color: Colors.grey,
+            color: Colors.black,
             offset: Offset(0.0, 1.0), //(x,y)
             blurRadius: 6.0,
           ),
@@ -32,13 +32,13 @@ class GradientAppBar extends StatelessWidget implements PreferredSizeWidget{
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'AFC FEVER SCANNER',
+            title,
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.w900,
               fontStyle: FontStyle.italic,
               fontFamily: 'Open Sans',
-              fontSize: 55,
+              fontSize: 35,
               letterSpacing: 1.5
             ),
           ),

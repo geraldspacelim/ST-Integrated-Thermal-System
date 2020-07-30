@@ -1,3 +1,4 @@
+import 'package:facial_capture/models/count.dart';
 import 'package:facial_capture/models/filter.dart';
 import 'package:facial_capture/models/profile.dart';
 import 'package:facial_capture/profilelist.dart';
@@ -17,51 +18,80 @@ class _HomeState extends State<Home> {
   String _array = 'default';
   String _tempertaure = 'default'; 
   String _datetime = 'default'; 
+  int _count = 0;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomPadding: false,
-      backgroundColor: Colors.grey,
-      appBar: GradientAppBar(
-        title: 'FEVER DETECTION SYSTEM',
-        gradientBegin: Color(0xff43cea2),
-        gradientEnd: Color(0xff185a9d),
-      ),
-      floatingActionButton: FloatingActionButton(
-       onPressed: () async {
-          final Filter filter = await Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => FilterPage()),
-        );
-        print(filter.array);
-        print(filter.temperature);
-        print(filter.datetime);
-        
-        setState(() {
-          _array = filter.array == null ? _array : filter.array; 
-          _tempertaure = filter.temperature  == null ? _array : filter.temperature;
-          _datetime = filter.datetime  == null ? _array : filter.datetime; 
-        });
-       },
-        child: Icon(
-          Icons.sort,
-          color: Colors.black,
+    // final String count = Provider.of<Count>(context, listen: false).count.toString();
+    // print(count);
+    return Stack(
+        children: [
+          Scaffold(
+          resizeToAvoidBottomPadding: false,
+          backgroundColor: Colors.blueGrey,
+          appBar: GradientAppBar(
+            title: 'INTEGRATED THERMAL SYSTEM',
+            gradientBegin: Color(0xff000428 ),
+            gradientEnd: Color(0xff004e92),
           ),
-        backgroundColor: Colors.white,
-      ),
-      body: _array == 'split' ? SplitArray(filter: new Filter(array: _array, temperature: _tempertaure, datetime: _datetime)) : SafeArea(
-         child: Column( 
-          children: [
-            Container(
-              child: StreamProvider<List<Profile>>.value(
-                value: DatabaseService().profileData(_array, _tempertaure, _datetime), 
-                child: ProfileList(),
+          floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+              final Filter filter = await Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => FilterPage()),
+            );
+            print(filter.array);
+            print(filter.temperature);
+            print(filter.datetime);
+            
+            setState(() {
+              _array = filter.array == null ? "default" : filter.array; 
+              _tempertaure = filter.temperature  == null ? "default" : filter.temperature;
+              _datetime = filter.datetime  == null ? "default" : filter.datetime; 
+            });
+          },
+            child: Icon(
+              Icons.sort,
+              color: Colors.black,
               ),
-            ),
-          ]
-         )
-      )
+            backgroundColor: Colors.white,
+          ),
+          body: _array == 'split' ? SplitArray(filter: new Filter(array: _array, temperature: _tempertaure, datetime: _datetime)) : SafeArea(
+            child: Column( 
+              children: [
+                Container(
+                  child: StreamProvider<List<Profile>>.value(
+                    value: DatabaseService().profileData(), 
+                    child: Flexible(child: ProfileList(filter: new Filter(array:_array, temperature:_tempertaure,  datetime:_datetime))),
+                  ),
+                ),
+              ]
+            )
+          )
+        ),
+        Positioned(
+          left:20.0,
+          bottom:20.0,
+          child: RaisedButton.icon(
+            shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18.0),
+          ),
+            color: Colors.white,
+            onPressed: () {}, 
+            icon: Icon(
+              Icons.people,
+              size: 30,
+              ), 
+            label: Text(
+              _count.toString(),
+              style:TextStyle(
+                color: Colors.black,
+                fontSize: 25,
+                fontWeight: FontWeight.bold
+              )
+          )),
+        ),
+      ]
     );
   }
 }

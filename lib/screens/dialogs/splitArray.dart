@@ -17,8 +17,8 @@ class SplitArray extends StatelessWidget {
             Container(
               height: MediaQuery.of(context).size.height / 2.3,
               child: StreamProvider<List<Profile>>.value(
-                value: DatabaseService().profileData(filter.array, filter.temperature, filter.datetime), 
-                child: ProfileList(),
+                value: DatabaseService().profileData(), 
+                child: ProfileList(filter: new Filter(array:"1", temperature:filter.temperature,  datetime:filter.datetime)),
               ),
             ),
             // SizedBox(height: MediaQuery.of(context).size.height/4),
@@ -32,8 +32,8 @@ class SplitArray extends StatelessWidget {
             Container(
               height:  MediaQuery.of(context).size.height / 2.3,
               child: StreamProvider<List<Profile>>.value(
-                value: DatabaseService().profileData(filter.array, filter.temperature, filter.datetime), 
-                child: ProfileList(),
+                value: DatabaseService().profileData(), 
+                child: ProfileList(filter: new Filter(array:"2", temperature:filter.temperature,  datetime:filter.datetime)),
               ),
             )
           ],
