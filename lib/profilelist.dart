@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:facial_capture/main.dart';
 import 'package:facial_capture/models/count.dart';
 import 'package:facial_capture/models/filter.dart';
 import 'package:facial_capture/models/profile.dart';
@@ -14,6 +17,12 @@ class ProfileList extends StatefulWidget {
 }
 
 class _ProfileListState extends State<ProfileList> {
+
+final ScrollController _scrollController  = ScrollController();
+final Count countController = Count();
+bool _loading = true; 
+var profiles;
+
 void _showEditPanel(Profile profile){
     showModalBottomSheet(
       backgroundColor:  Colors.transparent,
@@ -60,83 +69,92 @@ void _showEditPanel(Profile profile){
       var temp_profiles_2 = temp_profiles.where((i) =>  widget.filter.temperature == 'danger' ? i.temperature >= 37.5 : i.temperature < 37.5).toList();
       profiles = temp_profiles_2.where((i) => int.parse(widget.filter.datetime) <= 60 ? i.datetime >= currentMillieseconds - (int.parse(widget.filter.datetime)*60000) : i.datetime >= int.parse(widget.filter.datetime) && i.datetime <= int.parse(widget.filter.datetime) + 86400000).toList();
     }
+
+    countController.updateCount(profiles.length); 
     // print(profiles.length);
-    Count().updateCount(profiles.length); 
+    // Count().updateCount(profiles.length); 
+    // Provider.of<Count>(context, listen: false).updateCount(profiles.length);
+    // Count().updateCount(profiles.length); 
     // return Flexible(
-        return GridView.builder(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemCount: profiles.length,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 4,
-            childAspectRatio: 0.75,
-        ),
-        itemBuilder: (BuildContext context, int index) {
-          // var date = new DateTime.fromMillisecondsSinceEpoch(profiles[index].datetime);
-          // print(date);
-            return GestureDetector(
-              onTap: () => _showEditPanel( 
-                profiles[index]
-                // context: context,
-                // builder: (BuildContext context) => ProfileDialog(profile: profiles[index]),
-              ),
-              child: Card(
-                elevation: 3,
-                color: profiles[index].temperature <= 37.5 ?  Color(0xFF00D963) : Color(0xFFF32013),
-                shape: RoundedRectangleBorder(
-                  side:  BorderSide(
-                    color: profiles[index].temperature <= 37.5 ?  Color(0xFF00D963) : Color(0xFFF32013),
-                    width: 3.0),
-                  borderRadius: BorderRadius.circular(10.0)
-                ),
-                margin: EdgeInsets.all(10),
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                child: Align(
-                alignment: Alignment.topLeft,
-                child: Column(
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      height: 120.0,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: NetworkImage(profiles[index].image_captured),
-                          fit: BoxFit.cover
-                        )
-                      ),
-                    ),
-                    SizedBox(height: 5.0),
-                    Text(
-                      profiles[index].name, 
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: profiles[index].temperature <= 37.5 ? Colors.black : Colors.white,
-                      ),
-                    ),
-                    SizedBox(height: 3.0),
-                    Text(
-                      DateFormat.yMEd().add_Hm().format(new DateTime.fromMillisecondsSinceEpoch(profiles[index].datetime)),
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: profiles[index].temperature <= 37.5 ? Colors.black : Colors.white,
-                      ),
-                    ),
-                    SizedBox(height: 3.0),
-                    Text(
-                      profiles[index].temperature.toStringAsFixed(1) + "°C", 
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 15,
-                        color: profiles[index].temperature <= 37.5 ? Colors.black : Colors.white,
-                      )
-                    )
-                  ]
-                ),
-              ), 
+        return Scrollbar(
+          isAlwaysShown: true,
+          controller: _scrollController,
+                  child: GridView.builder(
+                    controller: _scrollController,
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
+          itemCount: profiles.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              childAspectRatio: 0.75,
           ),
-            );
-        },
-      );
+          itemBuilder: (BuildContext context, int index) {
+            // var date = new DateTime.fromMillisecondsSinceEpoch(profiles[index].datetime);
+            // print(date);
+              return GestureDetector(
+                onTap: () => _showEditPanel( 
+                  profiles[index]
+                  // context: context,
+                  // builder: (BuildContext context) => ProfileDialog(profile: profiles[index]),
+                ),
+                child: Card(
+                  elevation: 3,
+                  color: profiles[index].temperature <= 37.5 ?  Color(0xFF00D963) : Color(0xFFF32013),
+                  shape: RoundedRectangleBorder(
+                    side:  BorderSide(
+                      color: profiles[index].temperature <= 37.5 ?  Color(0xFF00D963) : Color(0xFFF32013),
+                      width: 3.0),
+                    borderRadius: BorderRadius.circular(10.0)
+                  ),
+                  margin: EdgeInsets.all(10),
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Column(
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        height: 120.0,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: NetworkImage(profiles[index].image_captured),
+                            fit: BoxFit.cover
+                          )
+                        ),
+                      ),
+                      SizedBox(height: 5.0),
+                      Text(
+                        profiles[index].name, 
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: profiles[index].temperature <= 37.5 ? Colors.black : Colors.white,
+                        ),
+                      ),
+                      SizedBox(height: 3.0),
+                      Text(
+                        DateFormat.yMEd().add_Hm().format(new DateTime.fromMillisecondsSinceEpoch(profiles[index].datetime)),
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: profiles[index].temperature <= 37.5 ? Colors.black : Colors.white,
+                        ),
+                      ),
+                      SizedBox(height: 3.0),
+                      Text(
+                        profiles[index].temperature.toStringAsFixed(1) + "°C", 
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 15,
+                          color: profiles[index].temperature <= 37.5 ? Colors.black : Colors.white,
+                        )
+                      )
+                    ]
+                  ),
+                ), 
+            ),
+              );
+          },
+      ),
+        );
     // );
   }
 }

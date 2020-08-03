@@ -1,12 +1,14 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
 
-class Count extends ChangeNotifier{
+class Count{
+  StreamController<int> countController = StreamController();
+  int count = 5; 
 
-  int _count = 0; 
-  int get count => _count;
-  
-  void updateCount(int updatedCount) {
-    _count = updatedCount; 
-    notifyListeners(); 
+   Stream<int> intStream() {
+    return countController.stream;
   }
-} 
+
+  updateCount(int updatedCount) {
+    countController.add(count = updatedCount); 
+  }
+}
