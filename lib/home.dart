@@ -1,15 +1,15 @@
-import 'dart:async';
-
 import 'package:facial_capture/models/count.dart';
 import 'package:facial_capture/models/filter.dart';
 import 'package:facial_capture/models/profile.dart';
 import 'package:facial_capture/profilelist.dart';
 import 'package:facial_capture/screens/dialogs/filterDialog.dart';
 import 'package:facial_capture/screens/dialogs/splitArray.dart';
+import 'package:facial_capture/services/auth.dart';
 import 'package:facial_capture/services/database.dart';
 import 'package:facial_capture/widgets/gradientAppBar.dart';
 import 'package:facial_capture/widgets/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
 
 
@@ -53,27 +53,51 @@ class _HomeState extends State<Home> {
             gradientBegin: Color(0xff000428 ),
             gradientEnd: Color(0xff004e92),
           ),
-          floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-              final Filter filter = await Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => FilterPage()),
-            );
-            print(filter.array);
-            print(filter.temperature);
-            print(filter.datetime);
-            
-            setState(() {
-              _array = filter.array == null ? "default" : filter.array; 
-              _tempertaure = filter.temperature  == null ? "default" : filter.temperature;
-              _datetime = filter.datetime  == null ? "default" : filter.datetime; 
-            });
-          },
-            child: Icon(
-              Icons.sort,
-              color: Colors.black,
-              ),
-            backgroundColor: Colors.white,
+          floatingActionButton: SpeedDial(
+          animatedIcon: AnimatedIcons.menu_close,
+          animatedIconTheme: IconThemeData(size: 22.0),
+          closeManually: false,
+          curve: Curves.bounceIn,
+          overlayColor: Colors.black,
+          overlayOpacity: 0.3,
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          elevation: 8.0,
+          shape: CircleBorder(),
+            children: [
+              SpeedDialChild(
+                child: Icon(
+                  Icons.sort,
+                  color: Colors.black,
+                ),
+                backgroundColor: Colors.yellow,
+                label: 'Filter',
+                labelStyle: TextStyle(fontSize: 18.0),
+                onTap: () async {
+                    final Filter filter = await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => FilterPage()),
+                  );
+                  setState(() {
+                    _array = filter.array == null ? "default" : filter.array; 
+                    _tempertaure = filter.temperature  == null ? "default" : filter.temperature;
+                    _datetime = filter.datetime  == null ? "default" : filter.datetime; 
+                  });
+                },
+              ), 
+              SpeedDialChild(
+                child: Icon(
+                  Icons.exit_to_app,
+                  color: Colors.black,
+                ),
+                backgroundColor: Colors.red,
+                label: 'Logout',
+                labelStyle: TextStyle(fontSize: 18.0),
+                onTap: () async {
+                  await AuthService().SignOut();
+                }
+              )
+            ],
           ),
           body: _array == 'split' ? SplitArray(filter: new Filter(array: _array, temperature: _tempertaure, datetime: _datetime)) : SafeArea(
             child: Column( 

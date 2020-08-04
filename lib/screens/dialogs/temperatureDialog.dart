@@ -7,31 +7,50 @@ import 'package:intl/intl.dart';
 class TemperatureDialog extends StatefulWidget {
   double temperature; 
   String remarks; 
-  TemperatureDialog({this.temperature, this.remarks});
+  String tag;
+  TemperatureDialog({this.temperature, this.remarks, this.tag});
   @override
   _TemperatureDialogState createState() => _TemperatureDialogState();
 }
 
 class _TemperatureDialogState extends State<TemperatureDialog> {
   double _temperature;
-  String _remarks; 
   int _datetime = 0; 
   Timer _timer;
+  bool _cleared = false;
+  bool _not_cleared = false; 
+  bool _others = false;
+  var txt = TextEditingController();
+  bool _show_error = false; 
+  String _tag; 
   
   @override
   void initState() {
     _temperature = widget.temperature;
-    _remarks = widget.remarks;
+    txt.text = widget.remarks;
+    if (widget.tag == 'cleared') {
+      _cleared = true;
+    } else if (widget.tag == 'not cleared') {
+      _not_cleared = true; 
+    } else if (widget.tag == 'others') {
+      _others = true; 
+    }
     super.initState();
   }
   @override
   Widget build(BuildContext context) {
   // _temperature = widget.temperature;
   return Dialog(
-  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)), //this right here
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(18.0),
+    side: BorderSide(
+      color: _show_error ? Colors.red : Colors.white,
+      width: 3,
+      )
+    ), //this right here
   child: Container(
-    height: 300.0,
-    width: 300.0,
+    height: 370.0,
+    width: 320.0,
 
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -130,14 +149,93 @@ class _TemperatureDialogState extends State<TemperatureDialog> {
             ),
           ],
         ),
-        SizedBox(height: 20,),
+        SizedBox(height: 10,),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [          
+          FlatButton(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18.0),
+              side: BorderSide(color: Colors.black)),
+            color: _cleared ? Colors.black : Colors.white,
+            textColor: _cleared ? Colors.white : Colors.black,
+            padding: EdgeInsets.all(8.0),
+            onPressed: () {
+              setState(() {
+                _cleared = true; 
+                _not_cleared = false; 
+                _others = false; 
+                _show_error = false;
+                _tag = "cleared"; 
+                txt.text += "Cleared"; 
+              });
+            },
+            child: Text(
+              "cleared".toUpperCase(),
+              style: TextStyle(
+                fontSize: 12.0,
+              ),
+            ),
+          ),
+          FlatButton(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18.0),
+              side: BorderSide(color: Colors.black)),
+             color: _not_cleared ? Colors.black : Colors.white,
+            textColor: _not_cleared ? Colors.white : Colors.black,
+            padding: EdgeInsets.all(8.0),
+            onPressed: () {
+              setState(() {
+                _cleared = false; 
+                _not_cleared = true; 
+                _others = false; 
+                _show_error = false;
+                _tag = "not cleared";
+                txt.text += "Not Cleared"; 
+              });
+            },
+            child: Text(
+              "not cleared".toUpperCase(),
+              style: TextStyle(
+                fontSize: 12.0,
+              ),
+            ),
+          ),
+            FlatButton(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18.0),
+              side: BorderSide(color: Colors.black)),
+             color: _others ? Colors.black : Colors.white,
+            textColor: _others ? Colors.white : Colors.black,
+            padding: EdgeInsets.all(8.0),
+            onPressed: () {
+              setState(() {
+                _cleared = false; 
+                _not_cleared = false; 
+                _others = true; 
+                txt.text = "Others";
+                _tag = "others";
+                _show_error = false;
+              });
+            },
+            child: Text(
+              "others".toUpperCase(),
+              style: TextStyle(
+                fontSize: 12.0,
+              ),
+            ),
+          ),
+          ],
+        ),
+        SizedBox(height: 10,),
         Padding(
           padding: const EdgeInsets.fromLTRB(10,0,10,0),
           child: TextField(
+            controller: txt,
                   maxLines: 3,
                   maxLength: 100,
                   decoration: InputDecoration(
-                      hintText: _remarks == '' ? 'Additional Remarks' : _remarks,
+                      hintText: 'Additional Remarks',
                       hintStyle: TextStyle(
                           fontSize: 15.0,
                           color: Colors.black54
@@ -145,12 +243,17 @@ class _TemperatureDialogState extends State<TemperatureDialog> {
                       // hintText: "Additional Remarks (Optional)",
                       border: OutlineInputBorder(),
                   ),
-                  onChanged: (text) {
-                    _remarks = text; 
-                  },
                 ),
         ),
-        SizedBox(height: 20,),
+        SizedBox(height: 5,),
+        Text(          
+          "Please select a tag",
+          style: TextStyle(
+            color: _show_error ? Colors.red : Colors.transparent,
+            fontWeight: FontWeight.bold
+          ),
+        ),
+        SizedBox(height: 15,),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -189,7 +292,13 @@ class _TemperatureDialogState extends State<TemperatureDialog> {
                   child: InkWell(
                     splashColor: Colors.grey, // splash color
                     onTap: () {
-                      Navigator.pop(context, new Temperature(temperature: double.parse(_temperature.toStringAsFixed(1)), datetime: DateTime.now().millisecondsSinceEpoch, remarks: _remarks));
+                      if (_cleared == false && _not_cleared == false && _others == false ) {
+                        setState(() {
+                          _show_error = true;
+                        });
+                      } else {
+                          Navigator.pop(context, new Temperature(temperature: double.parse(_temperature.toStringAsFixed(1)), datetime: DateTime.now().millisecondsSinceEpoch, remarks: txt.text, tag: _tag));
+                      }
                     }, // button pressed
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,

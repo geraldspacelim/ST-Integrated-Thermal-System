@@ -22,12 +22,15 @@ class _ProfileDialogState extends State<ProfileDialog> {
   double _currentTemperature; 
   int _currentDatetime; 
   String _currentRemarks;
+  String _tag = null; 
+  String _dateTimeDisplay; 
 
   @override
   void initState() {
     // TODO: implement initState
     _currentTemperature = widget.profile.temperature;
     _currentDatetime = widget.profile.datetime;
+    _dateTimeDisplay = formatDatetime(_currentDatetime); 
     _currentRemarks = widget.profile.manual_remarks;
     _previousDateTime = widget.profile.manual_datetime;
     _previousTemperature = widget.profile.manual_temperature; 
@@ -43,8 +46,15 @@ class _ProfileDialogState extends State<ProfileDialog> {
       _currentTemperature = temperature.temperature; 
       _currentDatetime = temperature.datetime; 
       _currentRemarks = temperature.remarks;
+      _tag = temperature.tag; 
     });
     } 
+  }
+
+  String formatDatetime(_currentDatetime) {
+    var dateTimeFormat = DateTime.fromMillisecondsSinceEpoch(_currentDatetime).toString();
+    var dateParse = DateTime.parse(dateTimeFormat);
+    return ("${dateParse.day}-${dateParse.month}-${dateParse.year} ${dateParse.hour}:${dateParse.minute}");
   }
 
   @override
@@ -309,7 +319,8 @@ class _ProfileDialogState extends State<ProfileDialog> {
                                         )
                                       ),
                                       Text (
-                                        DateFormat.yMd().add_Hm().format(DateTime.fromMillisecondsSinceEpoch(_currentDatetime)).toString(),
+                                        _dateTimeDisplay,
+                                        //  DateFormat.yMd().add_Hm().format(DateTime.fromMillisecondsSinceEpoch(_currentDatetime)).toString(),
                                         style: TextStyle(
                                           color: _currentTemperature <= 37.5 ?  Colors.black : Colors.white,
                                           fontWeight: FontWeight.bold,
@@ -459,7 +470,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
           padding: const EdgeInsets.fromLTRB(360, 95, 0 ,0),
           child: InkWell(
             onTap: () async {
-                final Temperature temperature = await showDialog(context: context, builder: (BuildContext context) => TemperatureDialog(temperature: _currentTemperature, remarks: _currentRemarks));
+                final Temperature temperature = await showDialog(context: context, builder: (BuildContext context) => TemperatureDialog(temperature: _currentTemperature, remarks: _currentRemarks, tag: _tag));
                 updateInformation(temperature);
               }, 
               child: Container(                        
@@ -512,8 +523,12 @@ class _ProfileDialogState extends State<ProfileDialog> {
                   child: InkWell(
                     splashColor: Colors.grey, // splash color
                     onTap: () async {
-                      await DatabaseService().updateDatabase(widget.profile.uid, _currentTemperature, _currentDatetime, _currentRemarks);
-                      Navigator.pop(context);
+                      print(widget.profile.uid);
+                      print(_currentTemperature); 
+                      print(_currentDatetime);
+                      print( _currentRemarks);
+                      // await DatabaseService().updateDatabase(widget.profile.uid, _currentTemperature, _currentDatetime, _currentRemarks);
+                      // Navigator.pop(context);
                     }, // button pressed
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,

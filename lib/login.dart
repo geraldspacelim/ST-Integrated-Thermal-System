@@ -1,4 +1,5 @@
 import 'package:facial_capture/home.dart';
+import 'package:facial_capture/services/auth.dart';
 import 'package:facial_capture/widgets/loading.dart';
 import 'package:flutter/material.dart';
 
@@ -10,15 +11,16 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  bool loading = false; 
+  bool _loading = false; 
   final _formKey = GlobalKey<FormState>(); 
+  final AuthService _auth = AuthService();
   String email = '';
   String password = ''; 
   String error = '';
 
   @override
   Widget build(BuildContext context) {
-    return Form(
+    return _loading ? Loading() : Form(
       key: _formKey, 
           child: Scaffold(
         body: Container(
@@ -93,11 +95,12 @@ class _LoginState extends State<Login> {
                                   decoration: BoxDecoration(
                                   ),
                                   child: TextFormField(
+                                    obscureText: true,
                                     validator: (val) => val.isEmpty ? "Enter a password": null,
                                     decoration: InputDecoration(
                                       hintText: "Password",
                                       hintStyle: TextStyle(color: Colors.grey),
-                                      border: InputBorder.none
+                                      border: InputBorder.none                         
                                     ),
                                   ),
                                 ),
@@ -133,19 +136,26 @@ class _LoginState extends State<Login> {
                               ),
                             ),
                           ),
-                          onPressed: () {
+                          onPressed: () async {
                             if (_formKey.currentState.validate()) {
-                                 Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => Home()),
-                              );          
+                              setState(() => {
+                                _loading = true
+                              });
+                              // await AuthService().signInAnonymously();
+                               dynamic result = await _auth.signInAnon();
+                              if (result == null) {
+                                setState(() {
+                                  error = "Something went wrong!!";
+                                  _loading = false;
+                                });
+                              }
                             }
                           },
                         ),
-                          SizedBox(height: 50,),
+                          SizedBox(height: 60,),
                           Container(
-                            height: 38.0,
-                            width: 200.0,
+                            height: 100.0,
+                            width: 520.0,
                             decoration: BoxDecoration(
                               image: DecorationImage(
                                 image: AssetImage(
