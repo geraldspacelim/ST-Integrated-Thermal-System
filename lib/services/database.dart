@@ -29,9 +29,9 @@ class DatabaseService {
                                                  'manual_temperature': postSnapshot.data['temperature'], 
                                                  'temperature': newTemperature,
                                                  'datetime': newTimeTaken, 
-      });
-    }
-  });
+        });
+      }
+    });
   }
 
   // profiles snapshot 

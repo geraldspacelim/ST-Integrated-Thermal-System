@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:facial_capture/main.dart';
 import 'package:facial_capture/models/count.dart';
@@ -20,8 +21,11 @@ class _ProfileListState extends State<ProfileList> {
 
 final ScrollController _scrollController  = ScrollController();
 final Count countController = Count();
-bool _loading = true; 
 var profiles;
+double _threshold_temperature = 37.5;
+double _temperature; 
+bool _loading = true; 
+Map<int, String> dates = {1: 'Mon', 2: 'Tues', 3: 'Wed', 4: 'Thur', 5: 'Fri', 6: 'Sat', 7: 'Sun'};
 
 void _showEditPanel(Profile profile){
     showModalBottomSheet(
@@ -31,6 +35,21 @@ void _showEditPanel(Profile profile){
         return ProfileDialog(profile: profile);
       }
     );
+  }
+  
+  String formatDatetime(_currentDatetime) {
+    var dateTimeFormat = DateTime.fromMillisecondsSinceEpoch(_currentDatetime).toString();
+    var dateParse = DateTime.parse(dateTimeFormat);
+    return ("${dates[dateParse.weekday]}, ${dateParse.day}-${dateParse.month}-${dateParse.year} ${dateParse.hour}:${dateParse.minute}");
+  }
+
+  Color formatTemperatureColour(previous_temp, current_temp) {
+    if (previous_temp == 0.1) {
+      return current_temp <= _threshold_temperature ?  Color(0xFF00D963) : Color(0xFFF32013);
+    } else {
+      return current_temp <= _threshold_temperature ? Color(0xFFffbf00) : Color(0xFFF32013);
+    }
+
   }
 
   @override
@@ -71,11 +90,7 @@ void _showEditPanel(Profile profile){
     }
 
     countController.updateCount(profiles.length); 
-    // print(profiles.length);
-    // Count().updateCount(profiles.length); 
-    // Provider.of<Count>(context, listen: false).updateCount(profiles.length);
-    // Count().updateCount(profiles.length); 
-    // return Flexible(
+
         return Scrollbar(
           isAlwaysShown: true,
           controller: _scrollController,
@@ -99,10 +114,10 @@ void _showEditPanel(Profile profile){
                 ),
                 child: Card(
                   elevation: 3,
-                  color: profiles[index].temperature <= 37.5 ?  Color(0xFF00D963) : Color(0xFFF32013),
+                  color: formatTemperatureColour(profiles[index].manual_temperature, profiles[index].temperature),
                   shape: RoundedRectangleBorder(
                     side:  BorderSide(
-                      color: profiles[index].temperature <= 37.5 ?  Color(0xFF00D963) : Color(0xFFF32013),
+                      color: formatTemperatureColour(profiles[index].manual_temperature, profiles[index].temperature),
                       width: 3.0),
                     borderRadius: BorderRadius.circular(10.0)
                   ),
@@ -122,30 +137,42 @@ void _showEditPanel(Profile profile){
                           )
                         ),
                       ),
-                      SizedBox(height: 5.0),
+                      SizedBox(height: 15.0),
                       Text(
-                        profiles[index].name, 
+                        formatDatetime(profiles[index].datetime),
                         style: TextStyle(
                           fontSize: 10,
-                          color: profiles[index].temperature <= 37.5 ? Colors.black : Colors.white,
+                          color: profiles[index].temperature <= _threshold_temperature ? Colors.black : Colors.white,
                         ),
                       ),
                       SizedBox(height: 3.0),
-                      Text(
-                        DateFormat.yMEd().add_Hm().format(new DateTime.fromMillisecondsSinceEpoch(profiles[index].datetime)),
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: profiles[index].temperature <= 37.5 ? Colors.black : Colors.white,
-                        ),
-                      ),
-                      SizedBox(height: 3.0),
-                      Text(
-                        profiles[index].temperature.toStringAsFixed(1) + "°C", 
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 15,
-                          color: profiles[index].temperature <= 37.5 ? Colors.black : Colors.white,
-                        )
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            profiles[index].manual_temperature != 0.1 ? profiles[index].manual_temperature.toString() + "°C" : '  -  ',
+                            style: TextStyle(
+                              // fontWeight: FontWeight.w400,
+                              fontSize: 11,
+                              color: profiles[index].temperature <=_threshold_temperature ? Colors.black : Colors.white,
+                            )
+                          ),
+                          Text(
+                            '|',
+                             style: TextStyle(
+                              fontSize: 15,
+                              color: profiles[index].temperature <=_threshold_temperature ? Colors.black : Colors.white,
+                            )
+                          ),
+                          Text(
+                            profiles[index].temperature.toString() + "°C", 
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 17,
+                              color: profiles[index].temperature <= _threshold_temperature ? Colors.black : Colors.white,
+                            )
+                          )
+                        ],
                       )
                     ]
                   ),

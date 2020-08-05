@@ -167,7 +167,7 @@ class _TemperatureDialogState extends State<TemperatureDialog> {
                 _others = false; 
                 _show_error = false;
                 _tag = "cleared"; 
-                txt.text += "Cleared"; 
+                txt.text = "Cleared"; 
               });
             },
             child: Text(
@@ -191,7 +191,7 @@ class _TemperatureDialogState extends State<TemperatureDialog> {
                 _others = false; 
                 _show_error = false;
                 _tag = "not cleared";
-                txt.text += "Not Cleared"; 
+                txt.text = "Not Cleared"; 
               });
             },
             child: Text(

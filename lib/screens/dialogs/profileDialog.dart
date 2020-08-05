@@ -24,6 +24,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
   String _currentRemarks;
   String _tag = null; 
   String _dateTimeDisplay; 
+  String _previousDatetimeDisplay;
 
   @override
   void initState() {
@@ -33,6 +34,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
     _dateTimeDisplay = formatDatetime(_currentDatetime); 
     _currentRemarks = widget.profile.manual_remarks;
     _previousDateTime = widget.profile.manual_datetime;
+    _previousDatetimeDisplay = formatDatetime(_previousDateTime);
     _previousTemperature = widget.profile.manual_temperature; 
     super.initState();
   } 
@@ -354,7 +356,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
                       padding: const EdgeInsets.fromLTRB(20, 20.0, 0 ,0),
                       child: Container(
                         decoration: BoxDecoration(
-                        color: Color(0xFFFBCE32),
+                        color: Colors.white,
                             borderRadius: BorderRadius.all(Radius.circular(5))
                         ),
                         width: 340.0,
@@ -412,7 +414,8 @@ class _ProfileDialogState extends State<ProfileDialog> {
                                         )
                                       ),
                                       Text (
-                                        _previousDateTime == 0 ? '-' : DateFormat.yMd().add_Hm().format(DateTime.fromMicrosecondsSinceEpoch(_previousDateTime)).toString(),
+                                        // _previousDatetimeDisplay,
+                                        _previousDateTime == 0 ? '-' : _previousDatetimeDisplay,
                                         style: TextStyle(
                                           color: Colors.black,
                                           fontWeight: FontWeight.bold,
@@ -523,12 +526,12 @@ class _ProfileDialogState extends State<ProfileDialog> {
                   child: InkWell(
                     splashColor: Colors.grey, // splash color
                     onTap: () async {
-                      print(widget.profile.uid);
-                      print(_currentTemperature); 
-                      print(_currentDatetime);
-                      print( _currentRemarks);
-                      // await DatabaseService().updateDatabase(widget.profile.uid, _currentTemperature, _currentDatetime, _currentRemarks);
-                      // Navigator.pop(context);
+                      // print(widget.profile.uid);
+                      // print(_currentTemperature); 
+                      // print(_currentDatetime);
+                      // print( _currentRemarks);
+                      await DatabaseService().updateDatabase(widget.profile.uid, _currentTemperature, _currentDatetime, _currentRemarks);
+                      Navigator.pop(context);
                     }, // button pressed
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,

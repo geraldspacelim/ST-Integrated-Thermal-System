@@ -154,8 +154,8 @@ class _LoginState extends State<Login> {
                         ),
                           SizedBox(height: 60,),
                           Container(
-                            height: 100.0,
-                            width: 520.0,
+                            height: 95.0,
+                            width: 515.0,
                             decoration: BoxDecoration(
                               image: DecorationImage(
                                 image: AssetImage(

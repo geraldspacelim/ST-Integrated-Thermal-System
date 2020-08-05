@@ -1,6 +1,7 @@
 import 'package:facial_capture/models/filter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:flutter_datetime_picker/flutter_datetime_picker.dart'; 
 
 
@@ -17,6 +18,7 @@ class _FilterPageState extends State<FilterPage> {
   String _dateDisplay = DateTime.now().toString().split(' ')[0];
   DateTime selectedDate = DateTime.now();
   String _datetimeValue;
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   @override
   void initState() {
@@ -54,7 +56,8 @@ class _FilterPageState extends State<FilterPage> {
             iconSize: 30,
             color: Colors.black,
             onPressed: () {
-              Navigator.pop(context, new Filter(array: null, temperature: null, datetime: null)); 
+              Navigator.of(context).pop();
+              // Navigator.pop(context, new Filter(array: null, temperature: null, datetime: null)); 
             },
           ),
           SizedBox(height: 10,),

@@ -68,9 +68,9 @@ class _HomeState extends State<Home> {
               SpeedDialChild(
                 child: Icon(
                   Icons.sort,
-                  color: Colors.black,
+                  color: Colors.white,
                 ),
-                backgroundColor: Colors.yellow,
+                backgroundColor: Colors.black,
                 label: 'Filter',
                 labelStyle: TextStyle(fontSize: 18.0),
                 onTap: () async {
@@ -78,19 +78,21 @@ class _HomeState extends State<Home> {
                     context,
                     MaterialPageRoute(builder: (context) => FilterPage()),
                   );
-                  setState(() {
+                  if (filter != null) {
+                      setState(() {
                     _array = filter.array == null ? "default" : filter.array; 
                     _tempertaure = filter.temperature  == null ? "default" : filter.temperature;
                     _datetime = filter.datetime  == null ? "default" : filter.datetime; 
                   });
+                  }
                 },
               ), 
               SpeedDialChild(
                 child: Icon(
                   Icons.exit_to_app,
-                  color: Colors.black,
+                  color: Colors.white,
                 ),
-                backgroundColor: Colors.red,
+                backgroundColor: Colors.black,
                 label: 'Logout',
                 labelStyle: TextStyle(fontSize: 18.0),
                 onTap: () async {
@@ -120,7 +122,7 @@ class _HomeState extends State<Home> {
             shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18.0),
           ),
-            color: Colors.white,
+            color: Colors.black,
             onPressed: () {}, 
             icon: Icon(
               Icons.people,
@@ -130,7 +132,7 @@ class _HomeState extends State<Home> {
               "50",
               // ct.toString(),
               style:TextStyle(
-                color: Colors.black,
+                color: Colors.white,
                 fontSize: 25,
                 fontWeight: FontWeight.bold
               )
