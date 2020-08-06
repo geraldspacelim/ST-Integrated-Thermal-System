@@ -25,6 +25,7 @@ class _HomeState extends State<Home> {
   String _datetime = 'default'; 
   // int _count = 0;
   bool _loading = true; 
+  bool _processed = false;
   @override
   // void initState() {
   //   super.initState();
@@ -83,6 +84,7 @@ class _HomeState extends State<Home> {
                     _array = filter.array == null ? "default" : filter.array; 
                     _tempertaure = filter.temperature  == null ? "default" : filter.temperature;
                     _datetime = filter.datetime  == null ? "default" : filter.datetime; 
+                    _processed = filter.processed == null ? false: filter.processed; 
                   });
                   }
                 },
@@ -101,13 +103,13 @@ class _HomeState extends State<Home> {
               )
             ],
           ),
-          body: _array == 'split' ? SplitArray(filter: new Filter(array: _array, temperature: _tempertaure, datetime: _datetime)) : SafeArea(
+          body: _array == 'split' ? SplitArray(filter: new Filter(array: _array, temperature: _tempertaure, datetime: _datetime, processed: _processed)) : SafeArea(
             child: Column( 
               children: [
                Container(
                   child: StreamProvider<List<Profile>>.value(
                     value: DatabaseService().profileData(), 
-                    child: Flexible(child: ProfileList(filter: new Filter(array:_array, temperature:_tempertaure,  datetime:_datetime))),
+                    child: Flexible(child: ProfileList(filter: new Filter(array:_array, temperature:_tempertaure,  datetime:_datetime, processed: _processed))),
                   ),
                 ),
                 
@@ -122,7 +124,7 @@ class _HomeState extends State<Home> {
             shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18.0),
           ),
-            color: Colors.black,
+            color: Colors.white,
             onPressed: () {}, 
             icon: Icon(
               Icons.people,
@@ -132,7 +134,7 @@ class _HomeState extends State<Home> {
               "50",
               // ct.toString(),
               style:TextStyle(
-                color: Colors.white,
+                color: Colors.black,
                 fontSize: 25,
                 fontWeight: FontWeight.bold
               )

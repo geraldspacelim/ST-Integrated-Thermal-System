@@ -45,11 +45,9 @@ void _showEditPanel(Profile profile){
 
   Color formatTemperatureColour(previous_temp, current_temp) {
     if (previous_temp == 0.1) {
-      return current_temp <= _threshold_temperature ?  Color(0xFF00D963) : Color(0xFFF32013);
-    } else {
-      return current_temp <= _threshold_temperature ? Color(0xFFffbf00) : Color(0xFFF32013);
+      return current_temp <= _threshold_temperature ?  Color(0xFF2DC990) : Color(0xFFFC6041);
     }
-
+    return Color(0xFFFCB941);
   }
 
   @override
@@ -88,6 +86,13 @@ void _showEditPanel(Profile profile){
       var temp_profiles_2 = temp_profiles.where((i) =>  widget.filter.temperature == 'danger' ? i.temperature >= 37.5 : i.temperature < 37.5).toList();
       profiles = temp_profiles_2.where((i) => int.parse(widget.filter.datetime) <= 60 ? i.datetime >= currentMillieseconds - (int.parse(widget.filter.datetime)*60000) : i.datetime >= int.parse(widget.filter.datetime) && i.datetime <= int.parse(widget.filter.datetime) + 86400000).toList();
     }
+    if (widget.filter.processed) {
+      profiles = profiles.where((i) => i.manual_temperature != 0.1).toList(); 
+    }
+    // } else {
+      
+    //   profiles = profiles.where((i) => i.manual_temperature == 0.1).toList(); 
+    // }
 
     countController.updateCount(profiles.length); 
 
@@ -142,7 +147,8 @@ void _showEditPanel(Profile profile){
                         formatDatetime(profiles[index].datetime),
                         style: TextStyle(
                           fontSize: 10,
-                          color: profiles[index].temperature <= _threshold_temperature ? Colors.black : Colors.white,
+                          color: Colors.black
+                          // profiles[index].temperature <= _threshold_temperature ? Colors.black : Colors.white,
                         ),
                       ),
                       SizedBox(height: 3.0),
@@ -154,14 +160,16 @@ void _showEditPanel(Profile profile){
                             style: TextStyle(
                               // fontWeight: FontWeight.w400,
                               fontSize: 11,
-                              color: profiles[index].temperature <=_threshold_temperature ? Colors.black : Colors.white,
+                              color: profiles[index].manual_temperature != 0.1 && profiles[index].temperature >= 37.5 ? Color(0xFFFE0202) : Colors.black
+                              // profiles[index].temperature <=_threshold_temperature ? Colors.black : Colors.white,
                             )
                           ),
                           Text(
                             '|',
                              style: TextStyle(
                               fontSize: 15,
-                              color: profiles[index].temperature <=_threshold_temperature ? Colors.black : Colors.white,
+                              color: profiles[index].manual_temperature != 0.1 && profiles[index].temperature >= 37.5 ? Color(0xFFFE0202) : Colors.black
+                              // profiles[index].temperature <=_threshold_temperature ? Colors.black : Colors.white,
                             )
                           ),
                           Text(
@@ -169,7 +177,8 @@ void _showEditPanel(Profile profile){
                             style: TextStyle(
                               fontWeight: FontWeight.w700,
                               fontSize: 17,
-                              color: profiles[index].temperature <= _threshold_temperature ? Colors.black : Colors.white,
+                              color: profiles[index].manual_temperature != 0.1 && profiles[index].temperature >= 37.5 ? Color(0xFFFE0202) : Colors.black
+                              // profiles[index].temperature <= _threshold_temperature ? Colors.black : Colors.white,
                             )
                           )
                         ],
