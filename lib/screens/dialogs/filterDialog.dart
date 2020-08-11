@@ -34,6 +34,16 @@ class _FilterPageState extends State<FilterPage> {
       _temperature = _temperature; 
       _datetime = _datetime;
       _processed = _processed;
+      // if (_datetime == 'period') {
+      //   _time = _time;
+      //   allowSlider = true;
+      // } else if (_datetime == 'day') {
+      //   _datetimeValue = _datetimeValue;
+      //    allowDate = true; 
+      // } else {
+      //   _datetimeValue  = _datetimeValue;
+      // }
+
       _datetime == 'period' ? _time = _time : _datetimeValue = _datetimeValue;
       _datetime == 'period' ? allowSlider = true: allowDate = true; 
       // _time = _time; 
@@ -49,14 +59,18 @@ class _FilterPageState extends State<FilterPage> {
     _datetime = prefs.getString('datetimePref') ?? 'default';
     _processed = prefs.getBool('processedPref') ?? false;
     // print(prefs.getString('datetimeValuePref'));
-    _datetime == 'period' ? _time = double.parse(prefs.getString('datetimeValuePref')) : _datetimeValue = prefs.getString('datetimeValuePref');
+    if (_datetime == 'period') {
+      _time = double.parse(prefs.getString('datetimeValuePref'));
+    } else if (_datetime == 'day') {
+      _datetimeValue = prefs.getString('datetimeValuePref');
+    } 
     // _datetimeValue = prefs.getString('datetimeValuePref') ?? 'default';
   }
 
   Future<Null> _selectDate(BuildContext context) async {
     picked = await showDatePicker( 
         context: context,
-        initialDate: DateTime.fromMillisecondsSinceEpoch(int.parse(_datetimeValue)),
+        initialDate:_datetimeValue == null ? DateTime.now() : DateTime.fromMillisecondsSinceEpoch(int.parse(_datetimeValue)),
         firstDate: DateTime(2015, 8),
         lastDate: DateTime(2101));
     if (picked != null && picked != selectedDate)
@@ -75,7 +89,7 @@ class _FilterPageState extends State<FilterPage> {
     prefs.setBool('processedPref', processed);
     if (datetime != 'default'){
       prefs.setString('datetimeValuePref', datetime == 'period' ? _time.toStringAsFixed(0) : _datetimeValue);
-    }
+    } 
   }
 
   String chooseDatetime(String option) {
@@ -217,7 +231,7 @@ class _FilterPageState extends State<FilterPage> {
                 ), 
                 CheckboxListTile(
                   title: Text(
-                    "Processed",
+                    "Secondary Temeperature Check",
                   style: TextStyle(
                       fontWeight: FontWeight.w300,
                       letterSpacing: 1
@@ -309,7 +323,7 @@ class _FilterPageState extends State<FilterPage> {
                 ),
                 SizedBox(height: 5,),
                 Text(
-                 'Datetime',
+                 'Date Time',
                  style: TextStyle(
                    fontSize: 25,
                    fontWeight: FontWeight.bold,
@@ -333,7 +347,7 @@ class _FilterPageState extends State<FilterPage> {
                         flex: 3,
                         child: 
                           Text(
-                            "Show records " + (_time == null ? 20.toString() :_time.toStringAsFixed(0)) + " minutes ago:",
+                            "Show only last " + (_time == null ? 20.toString() :_time.toStringAsFixed(0)) + " minutes :",
                             style: TextStyle(
                               fontWeight: FontWeight.w300,
                               letterSpacing: 1
@@ -403,7 +417,8 @@ class _FilterPageState extends State<FilterPage> {
                                   color: Colors.black,
                                 ),
                                 Text(
-                                  " " + formatDatefromEpoch(_datetimeValue == null ? DateTime.now().millisecondsSinceEpoch.toString() : _datetimeValue ),             
+                                  // " " + formatDatefromEpoch(_datetimeValue == null ? DateTime.now().millisecondsSinceEpoch.toString() : _datetimeValue ),   
+                                  " " + formatDatefromEpoch(_datetimeValue == null  ? DateTime.now().millisecondsSinceEpoch.toString() : _datetimeValue),    
                                   style: TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.w300,
