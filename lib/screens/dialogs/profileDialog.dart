@@ -7,7 +7,8 @@ import 'package:intl/intl.dart';
 
 class ProfileDialog extends StatefulWidget {
   final Profile profile;
-  ProfileDialog({this.profile});
+  final String username; 
+  ProfileDialog({this.profile, this.username});
 
   @override
   _ProfileDialogState createState() => _ProfileDialogState();
@@ -25,10 +26,12 @@ class _ProfileDialogState extends State<ProfileDialog> {
   String _tag = null; 
   String _dateTimeDisplay; 
   String _previousDatetimeDisplay;
+  String _username; 
 
   @override
   void initState() {
     // TODO: implement initState
+    super.initState();
     _currentTemperature = widget.profile.temperature;
     _currentDatetime = widget.profile.datetime;
     _dateTimeDisplay = formatDatetime(_currentDatetime); 
@@ -36,7 +39,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
     _previousDateTime = widget.profile.manual_datetime;
     _previousDatetimeDisplay = formatDatetime(_previousDateTime);
     _previousTemperature = widget.profile.manual_temperature; 
-    super.initState();
+    _username = widget.username; 
   } 
 
   void updateInformation(Temperature temperature) {
@@ -238,7 +241,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
                                       ),
                                       SizedBox(width: 10,),
                                       Text(
-                                      widget.profile.array,
+                                      "Gateway " + widget.profile.array,
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
@@ -336,7 +339,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
                                   Row(
                                     children: [
                                         Text(
-                                          "Operator: " + "test operator",
+                                          "Operator: " + "$_username",
                                           style: TextStyle(
                                             color: _currentTemperature <= 37.5 ?  Colors.black : Colors.white,
                                             letterSpacing: 1,
@@ -429,7 +432,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
                                   Row(
                                     children: [
                                         Text(
-                                          "Operator: " + "test operator",
+                                          "Operator: " + "$_username",
                                           style: TextStyle(
                                             color: Colors.black,
                                             letterSpacing: 1,

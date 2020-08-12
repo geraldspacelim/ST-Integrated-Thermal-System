@@ -1,4 +1,5 @@
-import 'package:facial_capture/models/count.dart';
+import 'dart:async';
+
 import 'package:facial_capture/models/filter.dart';
 import 'package:facial_capture/models/profile.dart';
 import 'package:facial_capture/profilelist.dart';
@@ -11,6 +12,7 @@ import 'package:facial_capture/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class Home extends StatefulWidget {
@@ -19,31 +21,48 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  // StreamController<int> ct;
-  String _array = 'default';
-  String _tempertaure = 'default'; 
-  String _datetime = 'default'; 
+  // StreamController<Counter> ct;
+  String _array;
+  String _temperature; 
+  String _datetime; 
   // int _count = 0;
   bool _loading = true; 
-  bool _processed = false;
+  bool _processed;
+  String _username; 
+  bool _showUsername = false;
+
+  // filters 
+
+  Future<Null> getSharedPrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    _username = prefs.getString('username') ?? 'test operator';
+    _array = prefs.getString('arrayPref') ?? 'default';
+    _temperature = prefs.getString('tempPref') ?? 'default';
+    _datetime = prefs.getString('datetimePref') ?? 'default';
+    _processed = prefs.getBool('processedPref') ?? false;
+  }
+
   @override
-  // void initState() {
-  //   super.initState();
-  //   if (DatabaseService().profileData() != null) {
-  //     setState(() {
-  //       _loading = false; 
-  //     });
-  //   }
-  // }
+  void initState() {
+    super.initState();
+    getSharedPrefs().then((_) => setState(() {
+        _username = _username; 
+        _array = _array; 
+        _temperature = _temperature; 
+        _processed = _processed;
+        _datetime = _datetime;
+      })
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-     if (DatabaseService().profileData() != null) {
+     if (DatabaseService().profileData() != null && _username != null && _array != null && _temperature != null && _processed != null && _datetime != null) {
       setState(() {
         _loading = false; 
       });
     }
-    // var ct = Provider.of<int>(context);
+    var ct = Provider.of<String>(context) ;
     return  _loading ? Loading() : Stack(
         children: [
           Scaffold(
@@ -60,7 +79,7 @@ class _HomeState extends State<Home> {
           closeManually: false,
           curve: Curves.bounceIn,
           overlayColor: Colors.black,
-          overlayOpacity: 0.3,
+          overlayOpacity: 0.5,
           backgroundColor: Colors.white,
           foregroundColor: Colors.black,
           elevation: 8.0,
@@ -77,12 +96,12 @@ class _HomeState extends State<Home> {
                 onTap: () async {
                     final Filter filter = await Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => FilterPage()),
-                  );
+                    MaterialPageRoute(builder: (context) => FilterPage(filter: new Filter(array: _array, temperature: _temperature, datetime: _datetime, processed: _processed)),
+                  ));
                   if (filter != null) {
                       setState(() {
                     _array = filter.array == null ? "default" : filter.array; 
-                    _tempertaure = filter.temperature  == null ? "default" : filter.temperature;
+                    _temperature = filter.temperature  == null ? "default" : filter.temperature;
                     _datetime = filter.datetime  == null ? "default" : filter.datetime; 
                     _processed = filter.processed == null ? false: filter.processed; 
                   });
@@ -100,16 +119,31 @@ class _HomeState extends State<Home> {
                 onTap: () async {
                   await AuthService().SignOut();
                 }
-              )
+              ),
+              SpeedDialChild(
+                child: Icon(
+                  Icons.work_outline,
+                  color: Colors.white,
+                ),
+                backgroundColor: Colors.black,
+                label: 'Operator',
+                labelStyle: TextStyle(fontSize: 18.0),
+                onTap: () async {
+                  setState(() {
+                    _showUsername  = _showUsername ? false : true;
+                  });
+                }
+              ),
             ],
           ),
-          body: _array == 'split' ? SplitArray(filter: new Filter(array: _array, temperature: _tempertaure, datetime: _datetime, processed: _processed)) : SafeArea(
+          body: _array == 'split' ? SplitArray(filter: new Filter(array: _array, temperature: _temperature, datetime: _datetime, processed: _processed), username: _username) : SafeArea(
             child: Column( 
               children: [
                Container(
                   child: StreamProvider<List<Profile>>.value(
                     value: DatabaseService().profileData(), 
-                    child: Flexible(child: ProfileList(filter: new Filter(array:_array, temperature:_tempertaure,  datetime:_datetime, processed: _processed))),
+                    child: Flexible(child: ProfileList(filter: new Filter(array:_array, temperature:_temperature,  datetime:_datetime, processed: _processed), username: _username)),
+                    // child: Flexible(child: ProfileList()),
                   ),
                 ),
                 
@@ -131,8 +165,10 @@ class _HomeState extends State<Home> {
               size: 30,
               ), 
             label: Text(
-              "50",
-              // ct.toString(),
+              // _data.count.toString(),
+              // xyz.count.toString(),
+              // ct[0].toString(),
+              ct.split('-').toList()[0],
               style:TextStyle(
                 color: Colors.black,
                 fontSize: 25,
@@ -140,7 +176,54 @@ class _HomeState extends State<Home> {
               )
           )),
         ),
+         Visibility(
+            visible: _showUsername, 
+            child: Positioned(
+            left:120.0,
+            bottom:20.0,
+            child: RaisedButton.icon(
+              shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18.0),
+            ),
+              color: Colors.white,
+              onPressed: () {}, 
+              icon: Icon(
+                Icons.work_outline,
+                size: 30,
+                ), 
+              label: Text(
+                // _data.count.toString(),
+                // xyz.count.toString(),
+                // ct[0].toString(),
+                _username,
+                style:TextStyle(
+                  color: Colors.black,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold
+                )
+            )),
+        ),
+         ),
       ]
     );
   }
 }
+
+final eventProvider = EventProvider();
+// EventProvider (Stream)
+
+class EventProvider {
+  StreamController<String> sc = StreamController();
+  String count = "";
+  String previousCount = ""; 
+
+
+  Stream<String> strStream(){
+    return sc.stream;
+  }
+
+  updateCount (String updatedCount) {
+    sc.add(updatedCount);
+  }
+}
+

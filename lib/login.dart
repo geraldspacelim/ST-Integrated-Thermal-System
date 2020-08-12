@@ -2,6 +2,7 @@ import 'package:facial_capture/home.dart';
 import 'package:facial_capture/services/auth.dart';
 import 'package:facial_capture/widgets/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class Login extends StatefulWidget {
@@ -14,7 +15,7 @@ class _LoginState extends State<Login> {
   bool _loading = false; 
   final _formKey = GlobalKey<FormState>(); 
   final AuthService _auth = AuthService();
-  String email = '';
+  String username = '';
   String password = ''; 
   String error = '';
 
@@ -88,6 +89,11 @@ class _LoginState extends State<Login> {
                                       hintStyle: TextStyle(color: Colors.grey),
                                       border: InputBorder.none             
                                     ),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        username = value; 
+                                      });
+                                    },
                                   ),
                                 ),
                                 Container(
@@ -142,6 +148,8 @@ class _LoginState extends State<Login> {
                                 _loading = true
                               });
                               // await AuthService().signInAnonymously();
+                               SharedPreferences prefs = await SharedPreferences.getInstance();
+                               prefs.setString('username', username); 
                                dynamic result = await _auth.signInAnon();
                               if (result == null) {
                                 setState(() {

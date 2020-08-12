@@ -6,6 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 class FilterPage extends StatefulWidget {
+  final Filter filter; 
+  FilterPage({this.filter}); 
   @override
   _FilterPageState createState() => _FilterPageState();
 }
@@ -14,69 +16,57 @@ class _FilterPageState extends State<FilterPage> {
   String _array; 
   String _temperature; 
   String _datetime;
+  String _datetimeGroupValue; 
+  bool _processed; 
+  // int _datetimeValue;
+  double _periodValue; 
+  int _dayValue; 
+  
   double _time;
-  String _dateDisplay = DateTime.now().toString().split(' ')[0];
+
+  String _dateDisplay =  DateTime.now().toLocal().toString().split(' ')[0];
   DateTime selectedDate = DateTime.now();
-  String _datetimeValue;
+
   bool allowSlider = false;
   bool allowDate = false;
   DateTime picked;
-  bool _processed = false; 
-
-  // _time.toStringAsFixed(0)
-  // _datetimeValue
 
   @override
   void initState() {
     super.initState();
-    getSharedPrefs().then((_) => setState(() {
-      _array = _array;
-      _temperature = _temperature; 
-      _datetime = _datetime;
-      _processed = _processed;
-      // if (_datetime == 'period') {
-      //   _time = _time;
-      //   allowSlider = true;
-      // } else if (_datetime == 'day') {
-      //   _datetimeValue = _datetimeValue;
-      //    allowDate = true; 
-      // } else {
-      //   _datetimeValue  = _datetimeValue;
-      // }
-
-      _datetime == 'period' ? _time = _time : _datetimeValue = _datetimeValue;
-      _datetime == 'period' ? allowSlider = true: allowDate = true; 
-      // _time = _time; 
-      // _datetimeValue = _datetimeValue;
-    })
-    );
-  }
-
-  Future<Null> getSharedPrefs() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    _array = prefs.getString('arrayPref') ?? 'default';
-    _temperature = prefs.getString('tempPref') ?? 'default';
-    _datetime = prefs.getString('datetimePref') ?? 'default';
-    _processed = prefs.getBool('processedPref') ?? false;
-    // print(prefs.getString('datetimeValuePref'));
-    if (_datetime == 'period') {
-      _time = double.parse(prefs.getString('datetimeValuePref'));
-    } else if (_datetime == 'day') {
-      _datetimeValue = prefs.getString('datetimeValuePref');
-    } 
-    // _datetimeValue = prefs.getString('datetimeValuePref') ?? 'default';
+    _array = widget.filter.array; 
+    _temperature = widget.filter.temperature; 
+    _datetime = widget.filter.datetime; 
+    _processed = widget.filter.processed; 
+    if (_datetime != "default") {
+      var temp = int.parse(_datetime); 
+      if (temp > 60) {
+        _datetimeGroupValue = "day";
+        _dayValue = temp;
+        _dateDisplay = DateTime.fromMillisecondsSinceEpoch(temp).toLocal().toString().split(' ')[0];
+        allowDate = true; 
+        allowSlider = false;
+      } else if (temp <= 60) {
+        _datetimeGroupValue = "period";
+        _periodValue = temp.toDouble();
+        allowDate = false; 
+        allowSlider = true;
+      }
+    } else {
+      _datetimeGroupValue = "default";
+    }
   }
 
   Future<Null> _selectDate(BuildContext context) async {
     picked = await showDatePicker( 
         context: context,
-        initialDate:_datetimeValue == null ? DateTime.now() : DateTime.fromMillisecondsSinceEpoch(int.parse(_datetimeValue)),
+        initialDate:_dayValue == null ? DateTime.now() : DateTime.fromMillisecondsSinceEpoch(_dayValue),
         firstDate: DateTime(2015, 8),
         lastDate: DateTime(2101));
     if (picked != null && picked != selectedDate)
       setState(() {
-        _datetimeValue = picked.millisecondsSinceEpoch.toString();
-        // _dateDisplay = picked.toLocal().toString().split(' ')[0]; 
+        _dayValue = picked.millisecondsSinceEpoch;
+        _dateDisplay = picked.toLocal().toString().split(' ')[0]; 
       });
   }
 
@@ -87,18 +77,18 @@ class _FilterPageState extends State<FilterPage> {
     prefs.setString('tempPref', temperature);
     prefs.setString('datetimePref', datetime);
     prefs.setBool('processedPref', processed);
-    if (datetime != 'default'){
-      prefs.setString('datetimeValuePref', datetime == 'period' ? _time.toStringAsFixed(0) : _datetimeValue);
-    } 
+    // if (datetime != 'default'){
+    //   prefs.setString('datetimeValuePref', datetime == 'period' ? _time.toString() : _datetimeValue);
+    // } 
   }
 
   String chooseDatetime(String option) {
-    if (option == 'period') {
-      return  _time.toStringAsFixed(0);
+    if (option == 'period' ) {
+      return  _periodValue.toStringAsFixed(0);
     } else if (option == 'day') {
-      return _datetimeValue; 
+      return _dayValue.toString(); 
     } else {
-      return 'default'; 
+      return "default"; 
     }
   }
 
@@ -135,8 +125,12 @@ class _FilterPageState extends State<FilterPage> {
                     iconSize: 40,
                     color: Color(0xFF00D963),
                     onPressed: () {
-                        addStringtoSF(_array, _temperature, _datetime, _processed); 
-                        Navigator.pop(context, new Filter(array: _array, temperature: _temperature, datetime: chooseDatetime(_datetime), processed: _processed)); 
+                      print(_array);
+                      print(_temperature);
+                      print(_datetime); 
+                      print(_processed); 
+                      addStringtoSF(_array, _temperature, chooseDatetime(_datetimeGroupValue), _processed); 
+                        Navigator.pop(context, new Filter(array: _array, temperature: _temperature, datetime: chooseDatetime(_datetimeGroupValue), processed: _processed)); 
                     },
                   ),
                   
@@ -231,7 +225,7 @@ class _FilterPageState extends State<FilterPage> {
                 ), 
                 CheckboxListTile(
                   title: Text(
-                    "Secondary Temeperature Check",
+                    "Secondary Temperature Check",
                   style: TextStyle(
                       fontWeight: FontWeight.w300,
                       letterSpacing: 1
@@ -264,7 +258,7 @@ class _FilterPageState extends State<FilterPage> {
                ),
                RadioListTile(
                   title: const Text(
-                    'Temperature above threshold value',
+                    'Temperature above threshold value (>= 37.5°C)',
                     style: TextStyle(
                       fontWeight: FontWeight.w300,
                       letterSpacing: 1
@@ -281,7 +275,7 @@ class _FilterPageState extends State<FilterPage> {
                 ),
                 RadioListTile(
                   title: const Text(
-                    'Temperature below threshold value',
+                    'Temperature below threshold value (37.5°C <)',
                     style: TextStyle(
                       fontWeight: FontWeight.w300,
                       letterSpacing: 1
@@ -333,10 +327,11 @@ class _FilterPageState extends State<FilterPage> {
                 RadioListTile(
                   value: 'period',
                   activeColor: Colors.blue,
-                  groupValue: _datetime,
+                  groupValue: _datetimeGroupValue,
                   onChanged: (value) {
                     setState(() {
-                      _datetime = value;
+                      _datetimeGroupValue = value;
+                      _periodValue = 20; 
                       allowDate = false; 
                       allowSlider = true;
                     });
@@ -347,7 +342,7 @@ class _FilterPageState extends State<FilterPage> {
                         flex: 3,
                         child: 
                           Text(
-                            "Show only last " + (_time == null ? 20.toString() :_time.toStringAsFixed(0)) + " minutes :",
+                            "Show only last " + (_periodValue == null ? 20.toString() :_periodValue.toStringAsFixed(0)) + " minutes :",
                             style: TextStyle(
                               fontWeight: FontWeight.w300,
                               letterSpacing: 1
@@ -357,14 +352,14 @@ class _FilterPageState extends State<FilterPage> {
                       Expanded(
                           flex: 5,
                           child: Slider(
-                          value: _time == null ? 20 : _time,
+                          value: _periodValue == null ? 20 : _periodValue,
                           activeColor: Colors.black,
                           inactiveColor: Colors.grey,
                           min: 20,
                           max: 60,
                           divisions: 8,
-                          label: (_time == null ? 20.toString() :_time.toStringAsFixed(0)) + " Mins",
-                          onChanged: allowSlider ? (val) => setState(() => _time = val) : null,
+                          label: (_periodValue == null ? 20.toString() :_periodValue.toStringAsFixed(0)) + " Mins",
+                          onChanged: allowSlider ? (val) => setState(() => _periodValue = val) : null,
                         ),
                       ),
                     ],
@@ -373,10 +368,11 @@ class _FilterPageState extends State<FilterPage> {
                 RadioListTile(
                   value: 'day',
                   activeColor: Colors.blue,
-                  groupValue: _datetime,
+                  groupValue: _datetimeGroupValue,
                   onChanged: (value) {
                     setState(() {
-                      _datetime = value;
+                      _datetimeGroupValue = value;
+                      _dayValue = DateTime.now().millisecondsSinceEpoch;
                       allowSlider = false;
                       allowDate = true; 
                     });
@@ -418,7 +414,7 @@ class _FilterPageState extends State<FilterPage> {
                                 ),
                                 Text(
                                   // " " + formatDatefromEpoch(_datetimeValue == null ? DateTime.now().millisecondsSinceEpoch.toString() : _datetimeValue ),   
-                                  " " + formatDatefromEpoch(_datetimeValue == null  ? DateTime.now().millisecondsSinceEpoch.toString() : _datetimeValue),    
+                                  " " + _dateDisplay,    
                                   style: TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.w300,
@@ -451,10 +447,10 @@ class _FilterPageState extends State<FilterPage> {
                   ),
                   value: "default",
                   activeColor: Colors.blue,
-                  groupValue: _datetime,
+                  groupValue: _datetimeGroupValue,
                   onChanged: (value) {
                     setState(() {
-                      _datetime = value;
+                      _datetimeGroupValue = value;
                       allowDate = false; 
                       allowSlider = false;
                     });

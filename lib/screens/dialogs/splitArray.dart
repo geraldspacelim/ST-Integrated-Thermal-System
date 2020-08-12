@@ -1,3 +1,7 @@
+import 'dart:async';
+import 'dart:developer';
+
+import 'package:facial_capture/home.dart';
 import 'package:facial_capture/models/filter.dart';
 import 'package:facial_capture/models/profile.dart';
 import 'package:facial_capture/profilelist.dart';
@@ -8,9 +12,13 @@ import 'package:provider/provider.dart';
 
 class SplitArray extends StatelessWidget {
   final Filter filter;
-  SplitArray({this.filter}); 
+  final String username;
+  SplitArray({this.filter, this.username}); 
+  StreamController<Counter> cs;
   @override
   Widget build(BuildContext context) {
+    var ct = Provider.of<String>(context);
+    // print(cs.toString());
      return Stack(
       children: [
         SafeArea(
@@ -20,7 +28,7 @@ class SplitArray extends StatelessWidget {
                 height: MediaQuery.of(context).size.height / 2.3,
                 child: StreamProvider<List<Profile>>.value(
                   value: DatabaseService().profileData(), 
-                  child: ProfileList(filter: new Filter(array:"1", temperature:filter.temperature,  datetime:filter.datetime, processed: filter.processed)),
+                  child: ProfileList(filter: new Filter(array:"1", temperature:filter.temperature,  datetime:filter.datetime, processed: filter.processed), username: username,),
                 ),
               ),
               // SizedBox(height: MediaQuery.of(context).size.height/4),
@@ -35,7 +43,7 @@ class SplitArray extends StatelessWidget {
                 height:  MediaQuery.of(context).size.height / 2.3,
                 child: StreamProvider<List<Profile>>.value(
                   value: DatabaseService().profileData(), 
-                  child: ProfileList(filter: new Filter(array:"2", temperature:filter.temperature,  datetime:filter.datetime, processed:filter.processed)),
+                  child: ProfileList(filter: new Filter(array:"2", temperature:filter.temperature,  datetime:filter.datetime, processed:filter.processed), username: username),
                 ),
               )
             ],
@@ -55,7 +63,7 @@ class SplitArray extends StatelessWidget {
               size: 30,
               ), 
             label: Text(
-              "100",
+              ct.split('-').toList()[1] == null ? '-' : ct.split('-').toList()[1],
               style:TextStyle(
                 color: Colors.black,
                 fontSize: 25,
@@ -77,7 +85,9 @@ class SplitArray extends StatelessWidget {
               size: 30,
               ), 
             label: Text(
-              "100",
+              // cs.countStream2.toString(),
+              // cs[1].toString(),
+              ct.split('-').toList()[2] == null ? '-' : ct.split('-').toList()[2],
               style:TextStyle(
                 color: Colors.black,
                 fontSize: 25,
