@@ -43,7 +43,7 @@ void _showEditPanel(Profile profile){
   String formatDatetime(_currentDatetime) {
     var dateTimeFormat = DateTime.fromMillisecondsSinceEpoch(_currentDatetime).toString();
     var dateParse = DateTime.parse(dateTimeFormat);
-    return ("${dates[dateParse.weekday]}, ${dateParse.day}-${dateParse.month}-${dateParse.year} ${dateParse.hour}:${dateParse.minute}");
+    return ("${dates[dateParse.weekday]}, ${dateParse.day}-${dateParse.month}-${dateParse.year} ${dateParse.hour}:${dateParse.minute.toString().padLeft(2, '0')}");
   }
 
   Color formatTemperatureColour(previous_temp, current_temp) {
@@ -150,7 +150,7 @@ void _showEditPanel(Profile profile){
                   // builder: (BuildContext context) => ProfileDialog(profile: profiles[index]),
                 ),
                 child: Card(
-                  elevation: 3,
+                  elevation: 8,
                   color: formatTemperatureColour(profiles[index].manual_temperature, profiles[index].temperature),
                   shape: RoundedRectangleBorder(
                     side:  BorderSide(
@@ -160,64 +160,72 @@ void _showEditPanel(Profile profile){
                   ),
                   margin: EdgeInsets.all(10),
                   clipBehavior: Clip.antiAliasWithSaveLayer,
-                  child: Align(
-                  alignment: Alignment.topLeft,
                   child: Column(
                     children: [
-                      Container(
-                        width: double.infinity,
-                        height: 120.0,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: NetworkImage(profiles[index].image_captured),
-                            fit: BoxFit.cover
-                          )
-                        ),
-                      ),
-                      SizedBox(height: 15.0),
-                      Text(
-                        formatDatetime(profiles[index].datetime),
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: Colors.black
-                          // profiles[index].temperature <= _threshold_temperature ? Colors.black : Colors.white,
-                        ),
-                      ),
-                      SizedBox(height: 3.0),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text(
-                            profiles[index].manual_temperature != 0.1 ? profiles[index].manual_temperature.toString() + "°C" : '  -  ',
-                            style: TextStyle(
-                              // fontWeight: FontWeight.w400,
-                              fontSize: 11,
-                              color: profiles[index].manual_temperature != 0.1 && profiles[index].temperature >= 37.5 ? Color(0xFFFE0202) : Colors.black
-                              // profiles[index].temperature <=_threshold_temperature ? Colors.black : Colors.white,
+                      Expanded(
+                        flex: 3,
+                          child: Container(
+                          // width: double.infinity,
+                          // height: 120,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: NetworkImage(profiles[index].image_captured),
+                              fit: BoxFit.cover
                             )
                           ),
-                          Text(
-                            '|',
-                             style: TextStyle(
-                              fontSize: 15,
-                              color: profiles[index].manual_temperature != 0.1 && profiles[index].temperature >= 37.5 ? Color(0xFFFE0202) : Colors.black
-                              // profiles[index].temperature <=_threshold_temperature ? Colors.black : Colors.white,
-                            )
-                          ),
-                          Text(
-                            profiles[index].temperature.toString() + "°C", 
+                        ),
+                      ),
+                      SizedBox(height: 10,),
+                      Expanded(
+                        flex: 1,
+                        child: Column(
+                            children:[
+                            Text(
+                            formatDatetime(profiles[index].datetime),
                             style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 17,
-                              color: profiles[index].manual_temperature != 0.1 && profiles[index].temperature >= 37.5 ? Color(0xFFFE0202) : Colors.black
+                              fontSize: 10,
+                              color: Colors.black
                               // profiles[index].temperature <= _threshold_temperature ? Colors.black : Colors.white,
-                            )
-                          )
-                        ],
-                      )
+                            ),
+                          ),
+                          SizedBox(height: 2.5),
+                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text(
+                                profiles[index].manual_temperature != 0.1 ? profiles[index].manual_temperature.toString() + "°C" : '  -  ',
+                                style: TextStyle(
+                                  // fontWeight: FontWeight.w400,
+                                  fontSize: 11,
+                                  color: profiles[index].manual_temperature != 0.1 && profiles[index].temperature >= 37.5 ? Color(0xFFFE0202) : Colors.black
+                                  // profiles[index].temperature <=_threshold_temperature ? Colors.black : Colors.white,
+                                )
+                              ),
+                              Text(
+                                '|',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: profiles[index].manual_temperature != 0.1 && profiles[index].temperature >= 37.5 ? Color(0xFFFE0202) : Colors.black
+                                  // profiles[index].temperature <=_threshold_temperature ? Colors.black : Colors.white,
+                                )
+                              ),
+                              Text(
+                                profiles[index].temperature.toString() + "°C", 
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 17,
+                                  color: profiles[index].manual_temperature != 0.1 && profiles[index].temperature >= 37.5 ? Color(0xFFFE0202) : Colors.black
+                                  // profiles[index].temperature <= _threshold_temperature ? Colors.black : Colors.white,
+                                )
+                              )
+                            ],
+                          ),                        
+                          ]
+                        ),
+                      ),
                     ]
                   ),
-                ), 
+                // ), 
             ),
               );
           },

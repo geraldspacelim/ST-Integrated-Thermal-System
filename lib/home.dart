@@ -65,9 +65,17 @@ class _HomeState extends State<Home> {
     var ct = Provider.of<String>(context) ;
     return  _loading ? Loading() : Stack(
         children: [
+          Container(
+            decoration: new BoxDecoration(
+              image: new DecorationImage(
+                image: new AssetImage("assets/background.jpg"),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
           Scaffold(
           resizeToAvoidBottomPadding: false,
-          backgroundColor: Colors.blueGrey,
+          backgroundColor: Colors.transparent,
           appBar: GradientAppBar(
             title: 'INTEGRATED THERMAL SYSTEM',
             gradientBegin: Color(0xff000428 ),
@@ -79,7 +87,7 @@ class _HomeState extends State<Home> {
           closeManually: false,
           curve: Curves.bounceIn,
           overlayColor: Colors.black,
-          overlayOpacity: 0.5,
+          overlayOpacity: 0.7,
           backgroundColor: Colors.white,
           foregroundColor: Colors.black,
           elevation: 8.0,
@@ -88,9 +96,9 @@ class _HomeState extends State<Home> {
               SpeedDialChild(
                 child: Icon(
                   Icons.sort,
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
-                backgroundColor: Colors.black,
+                backgroundColor: Colors.white,
                 label: 'Filter',
                 labelStyle: TextStyle(fontSize: 18.0),
                 onTap: () async {
@@ -111,9 +119,9 @@ class _HomeState extends State<Home> {
               SpeedDialChild(
                 child: Icon(
                   Icons.exit_to_app,
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
-                backgroundColor: Colors.black,
+                backgroundColor: Colors.white,
                 label: 'Logout',
                 labelStyle: TextStyle(fontSize: 18.0),
                 onTap: () async {
@@ -122,17 +130,18 @@ class _HomeState extends State<Home> {
               ),
               SpeedDialChild(
                 child: Icon(
-                  Icons.work_outline,
+                  Icons.assignment_ind,
                   color: Colors.white,
                 ),
-                backgroundColor: Colors.black,
-                label: 'Operator',
-                labelStyle: TextStyle(fontSize: 18.0),
-                onTap: () async {
-                  setState(() {
-                    _showUsername  = _showUsername ? false : true;
-                  });
-                }
+                backgroundColor: Colors.purple,
+                label: _username.toUpperCase(),
+                labelStyle: TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white
+                  ),
+                labelBackgroundColor: Colors.purple,
+                onTap: null
               ),
             ],
           ),
@@ -152,8 +161,8 @@ class _HomeState extends State<Home> {
           )
         ),
         _array == 'split' ? Container() : Positioned(
-          left:20.0,
-          bottom:20.0,
+          left: MediaQuery.of(context).size.width/30,
+          bottom:MediaQuery.of(context).size.height/45,
           child: RaisedButton.icon(
             shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18.0),
@@ -176,34 +185,6 @@ class _HomeState extends State<Home> {
               )
           )),
         ),
-         Visibility(
-            visible: _showUsername, 
-            child: Positioned(
-            left:120.0,
-            bottom:20.0,
-            child: RaisedButton.icon(
-              shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18.0),
-            ),
-              color: Colors.white,
-              onPressed: () {}, 
-              icon: Icon(
-                Icons.work_outline,
-                size: 30,
-                ), 
-              label: Text(
-                // _data.count.toString(),
-                // xyz.count.toString(),
-                // ct[0].toString(),
-                _username,
-                style:TextStyle(
-                  color: Colors.black,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold
-                )
-            )),
-        ),
-         ),
       ]
     );
   }

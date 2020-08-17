@@ -241,7 +241,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
                                       ),
                                       SizedBox(width: 10,),
                                       Text(
-                                      "Gateway " + widget.profile.array,
+                                      "Array " + widget.profile.array,
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,

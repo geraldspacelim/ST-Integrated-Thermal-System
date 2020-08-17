@@ -59,45 +59,6 @@ class DatabaseService {
 
   Stream <List<Profile>> profileData() {
     return profileCollection.orderBy('datetime', descending: true).snapshots().map(_profileListFromSnapshot);
-  //   int currentMillieseconds = int.parse(DateTime.now().millisecondsSinceEpoch.toString());
-  //   if (array != 'default' && temperature == 'default' && datetime == 'default') {
-  //     // print("array selected");
-  //     profiles = profiles.where("array", isEqualTo: array);
-  //   } 
-  //   else if (temperature != 'default' && array == 'default' && datetime == 'default' ) {
-  //     // print("temperature selected");
-  //     profiles = profiles.where("temperature", isGreaterThanOrEqualTo: temperature == 'danger' ?  37.5 :  37.5);
-  //   } 
-  //   else if (datetime != 'default' && temperature == 'default' && array == 'default') {
-  //     // print("datetime selected"); 
-  //     profiles = profiles.where("datetime", isGreaterThanOrEqualTo: int.parse(datetime) <= 60 ? currentMillieseconds - (int.parse(datetime)*60000) : datetime >= int.parse(datetime) && i.datetime <= int.parse(datetime) + 86400000);
-  //   } 
-  //   else if (array != 'default' && temperature != 'default' && datetime == 'default') {
-  //     // print("array and temperature selected");
-  //     var temp_profiles = profiles.where((i) => i.array == array);
-  //     return temp_profiles.where((i) =>  temperature == 'danger' ? i.temperature >= 37.5 : i.temperature < 37.5).snapshots().map(_profileListFromSnapshot);
-  //   } 
-  //   else if (array != 'default' &&temperature == 'default' && datetime != 'default') {
-  //     // print("array and datetime selected"); 
-  //     var temp_profiles = profiles.where((i) => i.array == array);
-  //     return temp_profiles.where((i) => int.parse(datetime) <= 60 ? i.datetime >= currentMillieseconds - (int.parse(datetime)*60000) : i.datetime >= int.parse(datetime) && i.datetime <= int.parse(datetime) + 86400000).snapshots().map(_profileListFromSnapshot);
-  //   } 
-  //   else if (array == 'default' && temperature != 'default' && datetime != 'default') {
-  //     // print("temperature and datetime selected");
-  //     var temp_profiles = profiles.where((i) =>  temperature == 'danger' ? i.temperature >= 37.5 : i.temperature < 37.5);
-  //     return temp_profiles.where((i) => int.parse(datetime) <= 60 ? i.datetime >= currentMillieseconds - (int.parse(datetime)*60000) : i.datetime >= int.parse(datetime) && i.datetime <= int.parse(datetime) + 86400000).snapshots().map(_profileListFromSnapshot);
-  //   } else if (array != 'default' && temperature != 'default' && datetime != 'default'){
-  //     // print("all selected");
-  //     var temp_profiles = profiles.where((i) => i.array ==array);
-  //     var temp_profiles_2 = temp_profiles.where((i) => temperature == 'danger' ? i.temperature >= 37.5 : i.temperature < 37.5);
-  //     return temp_profiles_2.where((i) => int.parse(datetime) <= 60 ? i.datetime >= currentMillieseconds - (int.parse(datetime)*60000) : i.datetime >= int.parse(datetime) && i.datetime <= int.parse(datetime) + 86400000).snapshots().map(_profileListFromSnapshot);
-  //   }
-  //   if (processed) {
-  //     return profiles.where((i) => i.manual_temperature != 0.1).snapshots().map(_profileListFromSnapshot);
-  //   }
-
-  //   return profiles.snapshots().map(_profileListFromSnapshot);
-
   }
 }
 

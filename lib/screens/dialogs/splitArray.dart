@@ -6,6 +6,7 @@ import 'package:facial_capture/models/filter.dart';
 import 'package:facial_capture/models/profile.dart';
 import 'package:facial_capture/profilelist.dart';
 import 'package:facial_capture/services/database.dart';
+import 'package:facial_capture/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -15,9 +16,21 @@ class SplitArray extends StatelessWidget {
   final String username;
   SplitArray({this.filter, this.username}); 
   StreamController<Counter> cs;
+  bool _loading = true; 
+  String _ct1;
+  String _ct2; 
+
   @override
   Widget build(BuildContext context) {
     var ct = Provider.of<String>(context);
+    try {
+      _ct1 = ct.split('-').toList()[1];
+      _ct2 = ct.split('-').toList()[2];
+    } catch (RangeError)  {
+      _ct1 = '-';
+      _ct2 = '-';
+    }
+    // print(ct.toString());
     // print(cs.toString());
      return Stack(
       children: [
@@ -50,8 +63,8 @@ class SplitArray extends StatelessWidget {
           ),
        ),
       Positioned(
-          left:20.0,
-          bottom:435.0,
+          left:MediaQuery.of(context).size.width/30,
+          bottom:MediaQuery.of(context).size.height/2.1,
           child: RaisedButton.icon(
             shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18.0),
@@ -63,7 +76,8 @@ class SplitArray extends StatelessWidget {
               size: 30,
               ), 
             label: Text(
-              ct.split('-').toList()[1] == null ? '-' : ct.split('-').toList()[1],
+              _ct1,
+              // '-',
               style:TextStyle(
                 color: Colors.black,
                 fontSize: 25,
@@ -72,8 +86,8 @@ class SplitArray extends StatelessWidget {
           )),
         ),
         Positioned(
-          left:20.0,
-          bottom:20.0,
+          left: MediaQuery.of(context).size.width/30,
+          bottom:MediaQuery.of(context).size.height/45,
           child: RaisedButton.icon(
             shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18.0),
@@ -87,7 +101,8 @@ class SplitArray extends StatelessWidget {
             label: Text(
               // cs.countStream2.toString(),
               // cs[1].toString(),
-              ct.split('-').toList()[2] == null ? '-' : ct.split('-').toList()[2],
+              _ct2,
+              // '-',
               style:TextStyle(
                 color: Colors.black,
                 fontSize: 25,
