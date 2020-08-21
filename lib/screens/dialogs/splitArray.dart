@@ -19,6 +19,8 @@ class SplitArray extends StatelessWidget {
   bool _loading = true; 
   String _ct1;
   String _ct2; 
+  int _count1; 
+  int _count2;
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +40,14 @@ class SplitArray extends StatelessWidget {
           child: Column( 
             children: [
               Container(
-                height: MediaQuery.of(context).size.height / 2.3,
-                child: StreamProvider<List<Profile>>.value(
-                  value: DatabaseService().profileData(), 
-                  child: ProfileList(filter: new Filter(array:"1", temperature:filter.temperature,  datetime:filter.datetime, processed: filter.processed), username: username,),
+                height:  MediaQuery.of(context).size.height / 2.3,
+                child: FutureBuilder<List<Profile>>(
+                  future: DatabaseService().profileDataST(),
+                  builder:  (context, snapshot) {
+                    List<Profile> profiles = snapshot.data;
+                    _count1 = profiles.length;
+                    return ProfileList(filter: new Filter(array:"1", temperature:filter.temperature,  datetime:filter.datetime, processed:filter.processed), profiles:profiles, username: username);
+                  }
                 ),
               ),
               // SizedBox(height: MediaQuery.of(context).size.height/4),
@@ -54,9 +60,13 @@ class SplitArray extends StatelessWidget {
               ),
               Container(
                 height:  MediaQuery.of(context).size.height / 2.3,
-                child: StreamProvider<List<Profile>>.value(
-                  value: DatabaseService().profileData(), 
-                  child: ProfileList(filter: new Filter(array:"2", temperature:filter.temperature,  datetime:filter.datetime, processed:filter.processed), username: username),
+                child: FutureBuilder<List<Profile>>(
+                  future: DatabaseService().profileDataST(),
+                  builder:  (context, snapshot) {
+                    List<Profile> profiles = snapshot.data;
+                    _count2 = profiles.length;
+                    return  ProfileList(filter: new Filter(array:"2", temperature:filter.temperature,  datetime:filter.datetime, processed:filter.processed), profiles: profiles, username: username);
+                  }
                 ),
               )
             ],
@@ -76,7 +86,7 @@ class SplitArray extends StatelessWidget {
               size: 30,
               ), 
             label: Text(
-              _ct1,
+              _count1.toString(),
               // '-',
               style:TextStyle(
                 color: Colors.black,
@@ -101,7 +111,7 @@ class SplitArray extends StatelessWidget {
             label: Text(
               // cs.countStream2.toString(),
               // cs[1].toString(),
-              _ct2,
+              _count2.toString(),
               // '-',
               style:TextStyle(
                 color: Colors.black,

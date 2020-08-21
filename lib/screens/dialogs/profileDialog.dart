@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:facial_capture/models/profile.dart';
 import 'package:facial_capture/models/temperature.dart';
 import 'package:facial_capture/screens/dialogs/temperatureDialog.dart';
@@ -32,14 +34,22 @@ class _ProfileDialogState extends State<ProfileDialog> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _currentTemperature = widget.profile.temperature;
-    _currentDatetime = widget.profile.datetime;
-    _dateTimeDisplay = formatDatetime(_currentDatetime); 
-    _currentRemarks = widget.profile.manual_remarks;
-    _previousDateTime = widget.profile.manual_datetime;
-    _previousDatetimeDisplay = formatDatetime(_previousDateTime);
-    _previousTemperature = widget.profile.manual_temperature; 
-    _username = widget.username; 
+    if(widget.profile.manual_temperature == 0.0 ) {
+      _currentTemperature =  widget.profile.temperature;
+      _currentDatetime = widget.profile.datetime;
+      _dateTimeDisplay = formatDatetime(_currentDatetime); 
+      _previousTemperature = 0.0;
+      _previousDatetimeDisplay = "-";
+      _currentRemarks = widget.profile.manual_remarks ?? "-";
+    } else {
+      _currentTemperature = widget.profile.manual_temperature; 
+      _currentDatetime = widget.profile.manual_datetime; 
+      _dateTimeDisplay = formatDatetime(_currentDatetime); 
+      _previousTemperature = widget.profile.temperature; 
+      _previousDateTime = widget.profile.datetime; 
+      _previousDatetimeDisplay = formatDatetime(_previousDateTime);
+    }
+        _username = widget.username; 
   } 
 
   void updateInformation(Temperature temperature) {
@@ -47,9 +57,11 @@ class _ProfileDialogState extends State<ProfileDialog> {
     else {
       setState(() {
       _previousDateTime = _currentDatetime;
+      _previousDatetimeDisplay = formatDatetime(_previousDateTime); 
       _previousTemperature = _currentTemperature;
       _currentTemperature = temperature.temperature; 
-      _currentDatetime = temperature.datetime; 
+      _currentDatetime = DateTime.now().millisecondsSinceEpoch;
+      _dateTimeDisplay = formatDatetime(_currentDatetime); 
       _currentRemarks = temperature.remarks;
       _tag = temperature.tag; 
     });
@@ -59,7 +71,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
   String formatDatetime(_currentDatetime) {
     var dateTimeFormat = DateTime.fromMillisecondsSinceEpoch(_currentDatetime).toString();
     var dateParse = DateTime.parse(dateTimeFormat);
-    return ("${dateParse.day}-${dateParse.month}-${dateParse.year} ${dateParse.hour}:${dateParse.minute}");
+    return ("${dateParse.day}-${dateParse.month}-${dateParse.year} ${dateParse.hour}:${(dateParse.minute).toString().padLeft(2, '0')}");
   }
 
   @override
@@ -112,7 +124,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
                                       //   )
                                       // ),
                                       Text(
-                                      widget.profile.location,
+                                      widget.profile.location ?? "location",
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
@@ -155,7 +167,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
                                       ),
                                       SizedBox(width: 10,),
                                       Text(
-                                      widget.profile.camera_number,
+                                      widget.profile.camera_number ?? "camera number",
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
@@ -198,7 +210,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
                                       ),
                                       SizedBox(width: 10,),
                                       Text(
-                                      widget.profile.camera_location,
+                                      widget.profile.camera_location ?? "camera location",
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
@@ -241,7 +253,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
                                       ),
                                       SizedBox(width: 10,),
                                       Text(
-                                      "Array " + widget.profile.array,
+                                      "Array " + widget.profile.array.toString() ?? "array",
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
@@ -266,7 +278,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
                       padding: const EdgeInsets.fromLTRB(20.0, 90.0, 0 ,0),
                       child: Container(
                         decoration: BoxDecoration(
-                        color: _currentTemperature <= 37.5 ?  Color(0xFF00D963) : Color(0xFFF32013),
+                        color: _currentTemperature < 37.5 ?  Color(0xFF00D963) : Color(0xFFF32013),
                             borderRadius: BorderRadius.all(Radius.circular(5),),                      
                         ),
                         width: 340.0,
@@ -280,14 +292,14 @@ class _ProfileDialogState extends State<ProfileDialog> {
                                 children: [
                                    Icon(
                                     Icons.local_hospital, 
-                                    color: _currentTemperature <= 37.5 ?  Colors.black : Colors.white,
+                                    color: _currentTemperature < 37.5 ?  Colors.black : Colors.white,
                                     size: 27.0,
                                   ),
                                 ],
                               ),
                               SizedBox(width: 5,),
                               VerticalDivider(
-                                color: _currentTemperature <= 37.5 ?  Colors.black : Colors.white,                            
+                                color: _currentTemperature < 37.5 ?  Colors.black : Colors.white,                            
                               ),
                               SizedBox(width: 5,),
                               Column(
@@ -297,15 +309,15 @@ class _ProfileDialogState extends State<ProfileDialog> {
                                     children: [
                                       Text("Current temperature: ",
                                       style: TextStyle(
-                                        color: _currentTemperature <= 37.5 ?  Colors.black : Colors.white,
+                                        color: _currentTemperature < 37.5 ?  Colors.black : Colors.white,
                                         letterSpacing: 1,
                                         fontSize: 15,
                                         )
                                       ),
                                       Text (
-                                        _currentTemperature.toStringAsFixed(1) + "°C", 
+                                        _currentTemperature.toStringAsFixed(1) + "°C" ?? "current temp", 
                                         style: TextStyle(
-                                          color: _currentTemperature <= 37.5 ?  Colors.black : Colors.white,
+                                          color: _currentTemperature < 37.5 ?  Colors.black : Colors.white,
                                           fontWeight: FontWeight.bold,
                                           letterSpacing: 1.5,
                                           fontSize: 15,
@@ -318,7 +330,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
                                     children: [
                                       Text("Time taken: ",
                                       style: TextStyle(
-                                        color: _currentTemperature <= 37.5 ?  Colors.black : Colors.white,
+                                        color: _currentTemperature < 37.5 ?  Colors.black : Colors.white,
                                         letterSpacing: 1,
                                         fontSize: 15,
                                         )
@@ -327,7 +339,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
                                         _dateTimeDisplay,
                                         //  DateFormat.yMd().add_Hm().format(DateTime.fromMillisecondsSinceEpoch(_currentDatetime)).toString(),
                                         style: TextStyle(
-                                          color: _currentTemperature <= 37.5 ?  Colors.black : Colors.white,
+                                          color: _currentTemperature < 37.5 ?  Colors.black : Colors.white,
                                           fontWeight: FontWeight.bold,
                                           letterSpacing: 1.5,
                                           fontSize: 15
@@ -341,7 +353,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
                                         Text(
                                           "Operator: " + "$_username",
                                           style: TextStyle(
-                                            color: _currentTemperature <= 37.5 ?  Colors.black : Colors.white,
+                                            color: _currentTemperature < 37.5 ?  Colors.black : Colors.white,
                                             letterSpacing: 1,
                                             fontSize: 15
                                           ),
@@ -396,7 +408,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
                                         )
                                       ),
                                       Text (
-                                        _previousTemperature == 0.1 ? '-' : _previousTemperature.toStringAsFixed(1) + "°C", 
+                                        _previousTemperature == 0.0 ? '-' : _previousTemperature.toStringAsFixed(1) + "°C", 
                                         style: TextStyle(
                                           color: Colors.black,
                                           fontWeight: FontWeight.bold,
@@ -418,7 +430,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
                                       ),
                                       Text (
                                         // _previousDatetimeDisplay,
-                                        _previousDateTime == 0 ? '-' : _previousDatetimeDisplay,
+                                        _previousDatetimeDisplay,
                                         style: TextStyle(
                                           color: Colors.black,
                                           fontWeight: FontWeight.bold,
@@ -458,7 +470,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
           width: circleRadius,
           height: circleRadius,
           decoration:
-              ShapeDecoration(shape: CircleBorder(), color: _currentTemperature <= 37.5 ?  Color(0xFF00D963) : Color(0xFFF32013)),
+              ShapeDecoration(shape: CircleBorder(), color: _currentTemperature < 37.5 ?  Color(0xFF00D963) : Color(0xFFF32013)),
           child: Padding(
             padding: EdgeInsets.all(circleBorderWidth),
             child: DecoratedBox(
@@ -466,8 +478,12 @@ class _ProfileDialogState extends State<ProfileDialog> {
                   shape: CircleBorder(),
                   image: DecorationImage(
                       fit: BoxFit.cover,
-                      image: NetworkImage(
-                        widget.profile.image_captured,
+                      image: (
+                        NetworkImage(this.widget.profile.imagePath)
+                        // Image.network(this.widget.profile.imagePath)
+                        // MemoryImage(base64Decode(this.widget.profile.image_captured)) 
+                        // MemoryImage(this.widget.profile.image_captured)
+                        // widget.profile.image_captured ?? "https://images.unsplash.com/photo-1513002749550-c59d786b8e6c?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=668&q=80",
                       ))),
             ),
           ),
@@ -533,7 +549,21 @@ class _ProfileDialogState extends State<ProfileDialog> {
                       // print(_currentTemperature); 
                       // print(_currentDatetime);
                       // print( _currentRemarks);
-                      await DatabaseService().updateDatabase(widget.profile.uid, _currentTemperature, _currentDatetime, _currentRemarks);
+                      // print(widget.profile.uid);
+                      // print(widget.profile.camera_number);
+                      await DatabaseService().updateDatabaseST(new Profile (uid: widget.profile.uid,
+                                                                           name: widget.profile.name, 
+                                                                           datetime: widget.profile.datetime,
+                                                                           camera_number: widget.profile.camera_number.toString(), 
+                                                                           camera_location: widget.profile.camera_location,
+                                                                           image_captured: widget.profile.image_captured, 
+                                                                           temperature: widget.profile.temperature,
+                                                                           array: widget.profile.array,
+                                                                           location: widget.profile.location,
+                                                                           manual_datetime: _currentDatetime,
+                                                                           manual_temperature: _currentTemperature,
+                                                                           manual_remarks: _currentRemarks));
+                      // widget.profile.uid, _currentTemperature, _currentDatetime, _currentRemarks);
                       Navigator.pop(context);
                     }, // button pressed
                     child: Column(
