@@ -11,27 +11,43 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 
-class SplitArray extends StatelessWidget {
+class SplitArray extends StatefulWidget {
   final Filter filter;
   final String username;
   SplitArray({this.filter, this.username}); 
-  StreamController<Counter> cs;
-  bool _loading = true; 
-  String _ct1;
-  String _ct2; 
+  @override
+  _SplitArrayState createState() => _SplitArrayState();
+}
+
+class _SplitArrayState extends State<SplitArray> {
+
   int _count1; 
-  int _count2;
+  int _count2; 
+  StreamController _splitProfile1; 
+  StreamController _splitProfile2; 
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    
+    super.initState();
+    _splitProfile1 = new StreamController();
+    _splitProfile2 = new StreamController();
+    Timer.periodic(Duration(seconds: 1), (_) => loadDetails());
+  }
+
+  loadDetails() async {
+    // if (!_profilesController.isClosed) {
+       await DatabaseService().profileDataST().then((res) async{
+        _splitProfile1.add(res);
+        _splitProfile2.add(res);
+        return res;
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
-    var ct = Provider.of<String>(context);
-    try {
-      _ct1 = ct.split('-').toList()[1];
-      _ct2 = ct.split('-').toList()[2];
-    } catch (RangeError)  {
-      _ct1 = '-';
-      _ct2 = '-';
-    }
     // print(ct.toString());
     // print(cs.toString());
      return Stack(
@@ -45,8 +61,8 @@ class SplitArray extends StatelessWidget {
                   future: DatabaseService().profileDataST(),
                   builder:  (context, snapshot) {
                     List<Profile> profiles = snapshot.data;
-                    _count1 = profiles.length;
-                    return ProfileList(filter: new Filter(array:"1", temperature:filter.temperature,  datetime:filter.datetime, processed:filter.processed), profiles:profiles, username: username);
+                    // _count1 = profiles.length;
+                    return ProfileList(filter: new Filter(array:"1", temperature:this.widget.filter.temperature,  datetime:this.widget.filter.datetime, processed:this.widget.filter.processed), profiles:profiles, username: this.widget.username);
                   }
                 ),
               ),
@@ -64,8 +80,8 @@ class SplitArray extends StatelessWidget {
                   future: DatabaseService().profileDataST(),
                   builder:  (context, snapshot) {
                     List<Profile> profiles = snapshot.data;
-                    _count2 = profiles.length;
-                    return  ProfileList(filter: new Filter(array:"2", temperature:filter.temperature,  datetime:filter.datetime, processed:filter.processed), profiles: profiles, username: username);
+                    // _count2 = profiles.length;
+                    return  ProfileList(filter: new Filter(array:"2", temperature:this.widget.filter.temperature,  datetime:this.widget.filter.datetime, processed:this.widget.filter.processed), profiles:profiles, username: this.widget.username);
                   }
                 ),
               )
@@ -86,8 +102,8 @@ class SplitArray extends StatelessWidget {
               size: 30,
               ), 
             label: Text(
-              _count1.toString(),
-              // '-',
+              // _count1.toString(),
+              '-',
               style:TextStyle(
                 color: Colors.black,
                 fontSize: 25,
@@ -111,8 +127,8 @@ class SplitArray extends StatelessWidget {
             label: Text(
               // cs.countStream2.toString(),
               // cs[1].toString(),
-              _count2.toString(),
-              // '-',
+              // _count2.toString(),
+              '-',
               style:TextStyle(
                 color: Colors.black,
                 fontSize: 25,

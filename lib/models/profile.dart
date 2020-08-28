@@ -16,7 +16,8 @@ class Profile {
   final double manual_temperature; 
   final String manual_remarks; 
   final String imagePath; 
+  final bool isMask;
   
-  const Profile({this.uid, this.name, this.datetime, this.camera_number, this.camera_location, this.image_captured, this.temperature, this.array, this.location, this.manual_datetime, this.manual_temperature, this.manual_remarks, this.imagePath});
+  const Profile({this.uid, this.name, this.datetime, this.camera_number, this.camera_location, this.image_captured, this.temperature, this.array, this.location, this.manual_datetime, this.manual_temperature, this.manual_remarks, this.imagePath, this.isMask});
 }
 

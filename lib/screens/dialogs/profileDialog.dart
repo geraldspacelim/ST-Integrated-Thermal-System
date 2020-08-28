@@ -479,11 +479,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
                   image: DecorationImage(
                       fit: BoxFit.cover,
                       image: (
-                        NetworkImage(this.widget.profile.imagePath)
-                        // Image.network(this.widget.profile.imagePath)
-                        // MemoryImage(base64Decode(this.widget.profile.image_captured)) 
-                        // MemoryImage(this.widget.profile.image_captured)
-                        // widget.profile.image_captured ?? "https://images.unsplash.com/photo-1513002749550-c59d786b8e6c?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=668&q=80",
+                        NetworkImage("http://10.168.4.9:81/imgSnap/${this.widget.profile.uid}" + "${this.widget.profile.camera_number}" + "${this.widget.profile.datetime}.jpg")
                       ))),
             ),
           ),
@@ -562,7 +558,9 @@ class _ProfileDialogState extends State<ProfileDialog> {
                                                                            location: widget.profile.location,
                                                                            manual_datetime: _currentDatetime,
                                                                            manual_temperature: _currentTemperature,
-                                                                           manual_remarks: _currentRemarks));
+                                                                           manual_remarks: _currentRemarks,
+                                                                           imagePath: widget.profile.imagePath,
+                                                                           isMask: widget.profile.isMask));
                       // widget.profile.uid, _currentTemperature, _currentDatetime, _currentRemarks);
                       Navigator.pop(context);
                     }, // button pressed

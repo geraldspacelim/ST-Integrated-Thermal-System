@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:facial_capture/login.dart';
 import 'package:facial_capture/models/filter.dart';
 import 'package:facial_capture/models/profile.dart';
 import 'package:facial_capture/profilelist.dart';
@@ -13,6 +14,7 @@ import 'package:facial_capture/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
+import 'package:rxdart/subjects.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 // import 'package:xml/xml.dart' as xml;
@@ -24,6 +26,8 @@ import 'services/database.dart';
 
 
 class Home extends StatefulWidget {
+  final String username; 
+  Home({this.username});
   @override
   _HomeState createState() => _HomeState();
 }
@@ -34,7 +38,7 @@ class _HomeState extends State<Home> {
   String _temperature; 
   String _datetime; 
   int _count = 0;
-  bool _loading = false; 
+  // bool _loading = false; 
   bool _processed;
   String _username; 
   bool _showUsername = false;
@@ -55,7 +59,7 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    _profilesController = new StreamController(); 
+    _profilesController = BehaviorSubject(); 
     Timer.periodic(Duration(seconds: 1), (_) => loadDetails());
     loadDetails();
     super.initState();
@@ -85,13 +89,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    //  if (DatabaseService().profileData() != null && _username != null && _array != null && _temperature != null && _processed != null && _datetime != null) {
-    //   setState(() {
-    //     _loading = false; 
-    //   });
-    // }
-    var ct = Provider.of<String>(context) ;
-    return  _loading ? Loading() : Stack(
+    return  Stack(
         children: [
           Container(
             decoration: new BoxDecoration(
@@ -156,8 +154,8 @@ class _HomeState extends State<Home> {
                 backgroundColor: Colors.white,
                 label: 'Logout',
                 labelStyle: TextStyle(fontSize: 18.0),
-                onTap: () async {
-                  await AuthService().SignOut();
+                onTap: () {
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
                 }
               ),
               SpeedDialChild(
@@ -166,7 +164,7 @@ class _HomeState extends State<Home> {
                   color: Colors.white,
                 ),
                 backgroundColor: Colors.purple,
-                label: _username == null ? "username" : _username.toUpperCase(),
+                label: this.widget.username.toUpperCase(),
                 labelStyle: TextStyle(
                   fontSize: 18.0,
                   fontWeight: FontWeight.bold,
@@ -180,48 +178,17 @@ class _HomeState extends State<Home> {
           body: _array == 'split' ? SplitArray(filter: new Filter(array: _array, temperature: _temperature, datetime: _datetime, processed: _processed), username: _username) : SafeArea(
             child: Column( 
               children: [
-                //  Container(
-                //   child: StreamBuilder (
-                //     stream: DatabaseService().getProfilesStream(Duration(seconds: 5)),
-                //     builder: (context, stream) {
-                //       switch (stream.connectionState) {
-                //         case ConnectionState.active:
-                //           return Flexible(child: ProfileList(filter: new Filter(array:_array, temperature:_temperature,  datetime:_datetime, processed: _processed),profiles: stream.data, username: _username));
-                //         case ConnectionState.done: 
-                //          if (stream.hasData) {
-                //             setState(() {
-                //               _loading = false;
-                //             });
-                //             return Flexible(child: ProfileList(filter: new Filter(array:_array, temperature:_temperature,  datetime:_datetime, processed: _processed),profiles: stream.data, username: _username));
-                //          }
-                //       } 
-                //       //  if (stream.connectionState == ConnectionState.done) {
-                //       //   return Icon(
-                //       //     Icons.check_circle,
-                //       //     color: Colors.green,
-                //       //     size: 20,
-                //       //   );
-                //       // }
-                //       // if (stream.hasData) {
-                //       //   return Flexible(child: ProfileList(filter: new Filter(array:_array, temperature:_temperature,  datetime:_datetime, processed: _processed),profiles: stream.data, username: _username));
-                //       // }
-                //     }                    // child: Flexible(child: ProfileList()),
-                //   ),
-                // ),
                 Container(
                   child: StreamBuilder(
                     stream: _profilesController.stream,
                     builder: (BuildContext context, AsyncSnapshot snapshot) {
                       if (snapshot.hasData) {
-                          // setState(() {
-                          //   _loading = false; 
-                          // });
                           List<Profile> profiles = snapshot.data;
                           _count = profiles.length;
                           return Flexible(child: ProfileList(filter: new Filter(array:_array, temperature:_temperature,  datetime:_datetime, processed: _processed),profiles: profiles, username: _username));
                       } 
                         if (snapshot.connectionState != ConnectionState.done) {
-                          return Loading();
+                          return Center(child: CircularProgressIndicator());
                         }
                     },
                   ),
@@ -244,7 +211,8 @@ class _HomeState extends State<Home> {
               size: 30,
               ), 
             label: Text(
-              _count.toString(),
+              '-',
+              // _count.toString(),
               // '-',
               // _data.count.toString(),
               // xyz.count.toString(),
@@ -262,21 +230,21 @@ class _HomeState extends State<Home> {
   }
 }
 
-final eventProvider = EventProvider();
-// EventProvider (Stream)
+// final eventProvider = EventProvider();
+// // EventProvider (Stream)
 
-class EventProvider {
-  StreamController<String> sc = StreamController();
-  String count = "";
-  String previousCount = ""; 
+// class EventProvider {
+//   StreamController<String> sc = StreamController();
+//   String count = "";
+//   String previousCount = ""; 
 
 
-  Stream<String> strStream(){
-    return sc.stream;
-  }
+//   Stream<String> strStream(){
+//     return sc.stream;
+//   }
 
-  updateCount (String updatedCount) {
-    sc.add(updatedCount);
-  }
-}
+//   updateCount (String updatedCount) {
+//     sc.add(updatedCount);
+//   }
+// }
 

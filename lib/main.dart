@@ -34,20 +34,11 @@ class MyApp extends StatelessWidget {
   // final countController = Count();
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<User>.value(
-      value: AuthService().user,
-      child: MaterialApp(
-      debugShowCheckedModeBanner: false,
-        home: MultiProvider(
-          providers: [
-              StreamProvider<String>.value(initialData: eventProvider.count, value: eventProvider.strStream()),
-              // StreamProvider<int>.value(value: eventProvider1.intStream()),
-              // StreamProvider<int>.value(value: eventProvider2.intStream()),
-              // ChangeNotifierProvider(builder: (_) => DataProvider(), create: (BuildContext context) {  },),
-          ],
-          child: Landing(),
-        )
-      ),
-    );
+    return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Login(),
+        // home: FilterPage(filter:new Filter(array: 'default', temperature: 'default', datetime: 'default', processed: false)),
+      );
+    // );
   }
 }

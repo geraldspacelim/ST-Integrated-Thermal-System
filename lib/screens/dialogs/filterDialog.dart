@@ -105,13 +105,13 @@ class _FilterPageState extends State<FilterPage> {
         //  body: SingleChildScrollView(
             body: Container(
              padding: EdgeInsets.all(20),
-             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                   IconButton(
+             child: Stack(
+              children: <Widget>[ 
+                
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    IconButton(
                     icon: Icon(Icons.close),
                     iconSize: 40,
                     color: Color(0xFFF32013),
@@ -120,343 +120,357 @@ class _FilterPageState extends State<FilterPage> {
                       // Navigator.pop(context, new Filter(array: null, temperature: null, datetime: null)); 
                     },
                   ),
-                  IconButton(
-                    icon: Icon(Icons.check),
-                    iconSize: 40,
-                    color: Color(0xFF00D963),
-                    onPressed: () {
-                      print(_array);
-                      print(_temperature);
-                      print(_datetime); 
-                      print(_processed); 
-                      addStringtoSF(_array, _temperature, chooseDatetime(_datetimeGroupValue), _processed); 
-                        Navigator.pop(context, new Filter(array: _array, temperature: _temperature, datetime: chooseDatetime(_datetimeGroupValue), processed: _processed)); 
+
+                  ],
+                                  
+                ),
+                Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                SizedBox(height: 5,),
+                 Text(
+                   'Filter And Sort By:',
+                   style: TextStyle(
+                     fontSize: 35,
+                     fontWeight: FontWeight.bold,
+                     letterSpacing: 1.5
+                   ),
+                 ),
+                 SizedBox(height: 15,),
+                 Text(
+                   'View',
+                   style: TextStyle(
+                     fontSize: 25,
+                     fontWeight: FontWeight.bold,
+                     letterSpacing: 1
+                   ),
+                 ),
+                   RadioListTile(
+                    //  autofocus: true,
+                    title: const Text(
+                      'Gate Array 1',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w300,
+                        letterSpacing: 1
+                      ),
+                    ),
+                    value: "1",
+                    activeColor: Colors.blue,
+                    groupValue: _array,
+                    onChanged: (value) {
+                      setState(() {
+                        _array = value;
+                      });
                     },
                   ),
-                  
-                ],
-              ),
-              SizedBox(height: 10,),
-               Text(
-                 'Filter And Sort By:',
-                 style: TextStyle(
-                   fontSize: 35,
-                   fontWeight: FontWeight.bold,
-                   letterSpacing: 1.5
-                 ),
-               ),
-               SizedBox(height: 20,),
-               Text(
-                 'View',
-                 style: TextStyle(
-                   fontSize: 25,
-                   fontWeight: FontWeight.bold,
-                   letterSpacing: 1
-                 ),
-               ),
-                 RadioListTile(
-                  //  autofocus: true,
-                  title: const Text(
-                    'Gate Array 1',
+                   RadioListTile(
+                    title: const Text(
+                      'Gate Array 2',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w300,
+                        letterSpacing: 1
+                      ),
+                    ),
+                    value: "2",
+                    activeColor: Colors.blue,
+                    groupValue: _array,
+                    onChanged: (value) {
+                      setState(() {
+                        _array = value;
+                      });
+                    },
+                  ),
+                   RadioListTile(
+                    title: const Text(
+                      'Split Gate Arrays',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w300,
+                        letterSpacing: 1
+                      ),
+                    ),
+                    value: "split",
+                    activeColor: Colors.blue,
+                    groupValue: _array,
+                    onChanged: (value) {
+                      setState(() {
+                        _array = value;
+                      });
+                    },
+                  ),
+                  RadioListTile(
+                    title: const Text(
+                      'All',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w300,
+                        letterSpacing: 1
+                      ),
+                    ),
+                    value: "default",
+                    activeColor: Colors.blue,
+                    groupValue: _array,
+                    onChanged: (value) {
+                      setState(() {
+                        _array = value;
+                      });
+                    },
+                  ), 
+                  CheckboxListTile(
+                    title: Text(
+                      "Secondary Temperature Check",
                     style: TextStyle(
-                      fontWeight: FontWeight.w300,
-                      letterSpacing: 1
+                        fontWeight: FontWeight.w300,
+                        letterSpacing: 1
+                      ),
                     ),
+                    value: _processed,
+                    onChanged: (value) { 
+                      setState(() {
+                        _processed = value; 
+                      }); 
+                    },
+                    controlAffinity: ListTileControlAffinity.leading,  //  <-- leading Checkbox
                   ),
-                  value: "1",
-                  activeColor: Colors.blue,
-                  groupValue: _array,
-                  onChanged: (value) {
-                    setState(() {
-                      _array = value;
-                    });
-                  },
-                ),
-                 RadioListTile(
-                  title: const Text(
-                    'Gate Array 2',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w300,
-                      letterSpacing: 1
-                    ),
+                 SizedBox(height: 10,),
+                 const Divider(
+                    color: Colors.grey,
+                    // height: 20,
+                    indent: 20,
+                    endIndent: 20,
+                    thickness: 1,
                   ),
-                  value: "2",
-                  activeColor: Colors.blue,
-                  groupValue: _array,
-                  onChanged: (value) {
-                    setState(() {
-                      _array = value;
-                    });
-                  },
-                ),
-                 RadioListTile(
-                  title: const Text(
-                    'Split Gate Arrays',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w300,
-                      letterSpacing: 1
-                    ),
-                  ),
-                  value: "split",
-                  activeColor: Colors.blue,
-                  groupValue: _array,
-                  onChanged: (value) {
-                    setState(() {
-                      _array = value;
-                    });
-                  },
-                ),
-                RadioListTile(
-                  title: const Text(
-                    'All',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w300,
-                      letterSpacing: 1
-                    ),
-                  ),
-                  value: "default",
-                  activeColor: Colors.blue,
-                  groupValue: _array,
-                  onChanged: (value) {
-                    setState(() {
-                      _array = value;
-                    });
-                  },
-                ), 
-                CheckboxListTile(
-                  title: Text(
-                    "Secondary Temperature Check",
-                  style: TextStyle(
-                      fontWeight: FontWeight.w300,
-                      letterSpacing: 1
-                    ),
-                  ),
-                  value: _processed,
-                  onChanged: (value) { 
-                    setState(() {
-                      _processed = value; 
-                    }); 
-                  },
-                  controlAffinity: ListTileControlAffinity.leading,  //  <-- leading Checkbox
-                ),
-               SizedBox(height: 5,),
-               const Divider(
-                  color: Colors.grey,
-                  // height: 20,
-                  indent: 20,
-                  endIndent: 20,
-                  thickness: 1,
-                ),
-                SizedBox(height: 5,),
-              Text(
-                 'Temperature',
-                 style: TextStyle(
-                   fontSize: 25,
-                   fontWeight: FontWeight.bold,
-                   letterSpacing: 1
-                 ),
-               ),
-               RadioListTile(
-                  title: const Text(
-                    'Temperature above threshold value (>= 37.5°C)',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w300,
-                      letterSpacing: 1
-                    ),
-                  ),
-                  value: "danger",
-                  activeColor: Colors.blue,
-                  groupValue: _temperature,
-                  onChanged: (value) {
-                    setState(() {
-                      _temperature = value;
-                    });
-                  },
-                ),
-                RadioListTile(
-                  title: const Text(
-                    'Temperature below threshold value (37.5°C <)',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w300,
-                      letterSpacing: 1
-                    ),
-                  ),
-                  value: "safe",
-                  activeColor: Colors.blue,
-                  groupValue: _temperature,
-                  onChanged: (value) {
-                    setState(() {
-                      _temperature = value;
-                    });
-                  },
-                ),
-                 RadioListTile(
-                  title: const Text(
-                    'All',
-                     style: TextStyle(
-                      fontWeight: FontWeight.w300,
-                      letterSpacing: 1
-                    ),
-                  ),
-                  value: "default",
-                  activeColor: Colors.blue,
-                  groupValue: _temperature,
-                  onChanged: (value) {
-                    setState(() {
-                      _temperature = value;
-                    });
-                  },
-                ),
-                  SizedBox(height: 5,),
-                const Divider(
-                  color: Colors.grey,
-                  // height: 20,
-                  indent: 20,
-                  endIndent: 20,
-                  thickness: 1,
-                ),
-                SizedBox(height: 5,),
+                  SizedBox(height: 10,),
                 Text(
-                 'Date Time',
-                 style: TextStyle(
-                   fontSize: 25,
-                   fontWeight: FontWeight.bold,
-                   letterSpacing: 1
+                   'Temperature',
+                   style: TextStyle(
+                     fontSize: 25,
+                     fontWeight: FontWeight.bold,
+                     letterSpacing: 1
+                   ),
                  ),
-               ),
-                RadioListTile(
-                  value: 'period',
-                  activeColor: Colors.blue,
-                  groupValue: _datetimeGroupValue,
-                  onChanged: (value) {
-                    setState(() {
-                      _datetimeGroupValue = value;
-                      _periodValue = 20; 
-                      allowDate = false; 
-                      allowSlider = true;
-                    });
-                  },
+                 RadioListTile(
+                    title: const Text(
+                      'Temperature above threshold value (>= 37.5°C)',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w300,
+                        letterSpacing: 1
+                      ),
+                    ),
+                    value: "danger",
+                    activeColor: Colors.blue,
+                    groupValue: _temperature,
+                    onChanged: (value) {
+                      setState(() {
+                        _temperature = value;
+                      });
+                    },
+                  ),
+                  RadioListTile(
+                    title: const Text(
+                      'Temperature below threshold value (37.5°C <)',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w300,
+                        letterSpacing: 1
+                      ),
+                    ),
+                    value: "safe",
+                    activeColor: Colors.blue,
+                    groupValue: _temperature,
+                    onChanged: (value) {
+                      setState(() {
+                        _temperature = value;
+                      });
+                    },
+                  ),
+                   RadioListTile(
+                    title: const Text(
+                      'All',
+                       style: TextStyle(
+                        fontWeight: FontWeight.w300,
+                        letterSpacing: 1
+                      ),
+                    ),
+                    value: "default",
+                    activeColor: Colors.blue,
+                    groupValue: _temperature,
+                    onChanged: (value) {
+                      setState(() {
+                        _temperature = value;
+                      });
+                    },
+                  ),
+                    SizedBox(height: 10,),
+                  const Divider(
+                    color: Colors.grey,
+                    // height: 20,
+                    indent: 20,
+                    endIndent: 20,
+                    thickness: 1,
+                  ),
+                  SizedBox(height: 10,),
+                  Text(
+                   'Date Time',
+                   style: TextStyle(
+                     fontSize: 25,
+                     fontWeight: FontWeight.bold,
+                     letterSpacing: 1
+                   ),
+                 ),
+                  RadioListTile(
+                    value: 'period',
+                    activeColor: Colors.blue,
+                    groupValue: _datetimeGroupValue,
+                    onChanged: (value) {
+                      setState(() {
+                        _datetimeGroupValue = value;
+                        _periodValue = 20; 
+                        allowDate = false; 
+                        allowSlider = true;
+                      });
+                    },
+                      title: Row(
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: 
+                            Text(
+                              "Show only last " + (_periodValue == null ? 20.toString() :_periodValue.toStringAsFixed(0)) + " minutes :",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w300,
+                                letterSpacing: 1
+                              ),
+                            )
+                        ),
+                        Expanded(
+                            flex: 5,
+                            child: Slider(
+                            value: _periodValue == null ? 20 : _periodValue,
+                            activeColor: Colors.black,
+                            inactiveColor: Colors.grey,
+                            min: 20,
+                            max: 60,
+                            divisions: 8,
+                            label: (_periodValue == null ? 20.toString() :_periodValue.toStringAsFixed(0)) + " Mins",
+                            onChanged: allowSlider ? (val) => setState(() => _periodValue = val) : null,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  RadioListTile(
+                    value: 'day',
+                    activeColor: Colors.blue,
+                    groupValue: _datetimeGroupValue,
+                    onChanged: (value) {
+                      setState(() {
+                        _datetimeGroupValue = value;
+                        _dayValue = DateTime.now().millisecondsSinceEpoch;
+                        allowSlider = false;
+                        allowDate = true; 
+                      });
+                    },
                     title: Row(
-                    children: [
-                      Expanded(
-                        flex: 3,
-                        child: 
-                          Text(
-                            "Show only last " + (_periodValue == null ? 20.toString() :_periodValue.toStringAsFixed(0)) + " minutes :",
+                      children: [
+                        Expanded(
+                          flex: 3,
+                            child: Text(
+                            'Show records on:', 
                             style: TextStyle(
                               fontWeight: FontWeight.w300,
                               letterSpacing: 1
-                            ),
-                          )
-                      ),
-                      Expanded(
-                          flex: 5,
-                          child: Slider(
-                          value: _periodValue == null ? 20 : _periodValue,
-                          activeColor: Colors.black,
-                          inactiveColor: Colors.grey,
-                          min: 20,
-                          max: 60,
-                          divisions: 8,
-                          label: (_periodValue == null ? 20.toString() :_periodValue.toStringAsFixed(0)) + " Mins",
-                          onChanged: allowSlider ? (val) => setState(() => _periodValue = val) : null,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                RadioListTile(
-                  value: 'day',
-                  activeColor: Colors.blue,
-                  groupValue: _datetimeGroupValue,
-                  onChanged: (value) {
-                    setState(() {
-                      _datetimeGroupValue = value;
-                      _dayValue = DateTime.now().millisecondsSinceEpoch;
-                      allowSlider = false;
-                      allowDate = true; 
-                    });
-                  },
-                  title: Row(
-                    children: [
-                      Expanded(
-                        flex: 3,
-                          child: Text(
-                          'Show records on:', 
-                          style: TextStyle(
-                            fontWeight: FontWeight.w300,
-                            letterSpacing: 1
-                          )
-                        ),
-                      ),
-                      Expanded(
-                        flex: 5,
-                          child: Container(
-                          // width: 200,
-                          height: 40,
-                          child: RaisedButton(
-                              color: Colors.white,
-                              onPressed: allowDate ?
-                               () => {
-                                _selectDate(context) 
-                              } : null,
-                              shape: RoundedRectangleBorder(
-                                 side: BorderSide(color: Colors.black, width: 1),
-                                 
-                              borderRadius: BorderRadius.circular(5.0)),
-                              elevation: 4.0,
-                              child: Row(
-                              children: <Widget>[
-                                Icon(
-                                  Icons.date_range,
-                                  size: 15,
-                                  color: Colors.black,
-                                ),
-                                Text(
-                                  // " " + formatDatefromEpoch(_datetimeValue == null ? DateTime.now().millisecondsSinceEpoch.toString() : _datetimeValue ),   
-                                  " " + _dateDisplay,    
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w300,
-                                      fontSize: 15.0),
-                                ),
-                                SizedBox(width: 115,),
-                                Text(
-                                  'Change',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                      fontWeight: FontWeight.w300,
-                                      fontSize: 15.0),
-                                  ),
-                          
-                              ],
-                            ),
+                            )
                           ),
                         ),
-                      )
-                    ],
-                  ),
-                ),
-                 RadioListTile(
-                  title: const Text(
-                    'All',
-                     style: TextStyle(
-                      fontWeight: FontWeight.w300,
-                      letterSpacing: 1
+                        Expanded(
+                          flex: 5,
+                            child: Container(
+                            // width: 200,
+                            height: 40,
+                            child: RaisedButton(
+                                color: Colors.white,
+                                onPressed: allowDate ?
+                                 () => {
+                                  _selectDate(context) 
+                                } : null,
+                                shape: RoundedRectangleBorder(
+                                   side: BorderSide(color: Colors.black, width: 1),
+                                   
+                                borderRadius: BorderRadius.circular(5.0)),
+                                elevation: 4.0,
+                                child: Row(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.date_range,
+                                    size: 15,
+                                    color: Colors.black,
+                                  ),
+                                  Text(
+                                    // " " + formatDatefromEpoch(_datetimeValue == null ? DateTime.now().millisecondsSinceEpoch.toString() : _datetimeValue ),   
+                                    " " + _dateDisplay,    
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w300,
+                                        fontSize: 15.0),
+                                  ),
+                                  SizedBox(width: 115,),
+                                  Text(
+                                    'Change',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                        fontWeight: FontWeight.w300,
+                                        fontSize: 15.0),
+                                    ),
+                            
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
                     ),
                   ),
-                  value: "default",
-                  activeColor: Colors.blue,
-                  groupValue: _datetimeGroupValue,
-                  onChanged: (value) {
-                    setState(() {
-                      _datetimeGroupValue = value;
-                      allowDate = false; 
-                      allowSlider = false;
-                    });
-                  },
-                ),
-              ],
+                   RadioListTile(
+                    title: const Text(
+                      'All',
+                       style: TextStyle(
+                        fontWeight: FontWeight.w300,
+                        letterSpacing: 1
+                      ),
+                    ),
+                    value: "default",
+                    activeColor: Colors.blue,
+                    groupValue: _datetimeGroupValue,
+                    onChanged: (value) {
+                      setState(() {
+                        _datetimeGroupValue = value;
+                        allowDate = false; 
+                        allowSlider = false;
+                      });
+                    },
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                      child: FlatButton(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(2.0),
+                      ),
+                      color: Colors.red,
+                      textColor: Colors.white,
+                      padding: EdgeInsets.all(8.0),
+                      onPressed: () {
+                         addStringtoSF(_array, _temperature, chooseDatetime(_datetimeGroupValue), _processed); 
+                          Navigator.pop(context, new Filter(array: _array, temperature: _temperature, datetime: chooseDatetime(_datetimeGroupValue), processed: _processed)); 
+                      },
+                      child: Text(
+                        "apply changes".toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 14.0,
+                        ),
+                      ),
+                    ),
+                  ),// ),
+                ],
+               ),
+              ]
              ),
            ),
         //  ),

@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:facial_capture/home.dart';
 import 'package:facial_capture/services/auth.dart';
 import 'package:facial_capture/widgets/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -19,7 +22,50 @@ class _LoginState extends State<Login> {
   String password = ''; 
   String error = '';
 
-  @override
+  // new edits 
+  String url = ""; 
+  var txt = TextEditingController();
+
+  _settings(context) {
+     Alert(
+      context: context,
+      title: "CONFIGURATION",
+      content: Column(
+        children: <Widget>[
+          TextField(
+            controller: txt,
+            decoration: InputDecoration(
+              icon: Icon(Icons.language),
+              labelText: 'URL',
+            ),
+            onChanged: (value) {
+              url = value; 
+            },
+          ),
+        ],
+      ),
+      buttons: [
+        DialogButton(
+          gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              colors: [
+                Color(0xff000428),
+                Color(0xff004e92),
+              ]
+            ),
+          onPressed: () {
+            // prefs.setString('url', url);
+            Navigator.pop(context);
+          },
+          child: Text(
+            "SUBMIT",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+        )
+      ]).show();
+  }
+
+ @override
   Widget build(BuildContext context) {
     return _loading ? Loading() : Form(
       key: _formKey, 
@@ -38,7 +84,25 @@ class _LoginState extends State<Login> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              SizedBox(height: 80,),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () async {
+                        // print("tap");
+                        txt.text = url;
+                        _settings(context);
+                      },
+                        child: Icon(
+                        Icons.settings,
+                        color: Colors.white,
+                      ),
+                    )
+                ],),
+              ),
+              SizedBox(height: 50,),
               Padding(
                 padding: EdgeInsets.all(20),
                 child: Column(
@@ -114,7 +178,7 @@ class _LoginState extends State<Login> {
                             ),
                           ),
                           SizedBox(height: 40,),
-                          Text("Forgot Password?", style: TextStyle(color: Colors.grey),),
+                          Text("Forget Password?", style: TextStyle(color: Colors.grey)),
                           SizedBox(height: 40,),
                            RaisedButton(
                           shape: RoundedRectangleBorder(
@@ -148,15 +212,18 @@ class _LoginState extends State<Login> {
                                 _loading = true
                               });
                               // await AuthService().signInAnonymously();
-                               SharedPreferences prefs = await SharedPreferences.getInstance();
-                               prefs.setString('username', username); 
-                               dynamic result = await _auth.signInAnon();
-                              if (result == null) {
-                                setState(() {
-                                  error = "Something went wrong!!";
-                                  _loading = false;
-                                });
-                              }
+                              //  SharedPreferences prefs = await SharedPreferences.getInstance();
+                              //  prefs.setString('username', username); 
+                               Timer(
+                                Duration(seconds: 3),(){
+                                  setState(() {
+                                    _loading = false; 
+                                      // return Home();
+                                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home(username: username)));
+                                  });
+                                  }
+                                );
+                            
                             }
                           },
                         ),
