@@ -44,6 +44,7 @@ class _HomeState extends State<Home> {
   bool _showUsername = false;
   StreamController _profilesController;
   // final myTransformer = ();
+  Timer timer;
 
 
   // filters 
@@ -60,8 +61,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     _profilesController = BehaviorSubject(); 
-    Timer.periodic(Duration(seconds: 1), (_) => loadDetails());
-    loadDetails();
+     timer = Timer.periodic(Duration(seconds: 1), (_) => loadDetails());
     super.initState();
     getSharedPrefs().then((_) => setState(() {
         _username = _username; 
@@ -74,16 +74,19 @@ class _HomeState extends State<Home> {
   }
 
   loadDetails() async {
-    DatabaseService().profileDataST().then((res) async{
-      _profilesController.add(res);
-      return res;
-    });
+    if (!_profilesController.isClosed) {
+      DatabaseService().profileDataST().then((res) async{
+        _profilesController.add(res);
+        return res;
+      });
+    }
+    
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
+    timer.cancel();
     _profilesController.close();
   }
 

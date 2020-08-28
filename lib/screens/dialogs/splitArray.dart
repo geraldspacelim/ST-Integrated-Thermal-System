@@ -9,6 +9,7 @@ import 'package:facial_capture/services/database.dart';
 import 'package:facial_capture/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rxdart/subjects.dart';
 
 
 class SplitArray extends StatefulWidget {
@@ -25,15 +26,27 @@ class _SplitArrayState extends State<SplitArray> {
   int _count2; 
   StreamController _splitProfile1; 
   StreamController _splitProfile2; 
+  Timer timer;
 
   @override
   void initState() {
     // TODO: implement initState
     
     super.initState();
-    _splitProfile1 = new StreamController();
-    _splitProfile2 = new StreamController();
-    Timer.periodic(Duration(seconds: 1), (_) => loadDetails());
+    _splitProfile1 = new BehaviorSubject();
+    _splitProfile2 = new BehaviorSubject();
+    if (!_splitProfile1.isClosed && !_splitProfile2.isClosed) {
+      timer = Timer.periodic(Duration(seconds: 1), (_) => loadDetails());
+    }
+  }
+  
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    timer.cancel();
+    _splitProfile1.close();
+    _splitProfile2.close();
   }
 
   loadDetails() async {
