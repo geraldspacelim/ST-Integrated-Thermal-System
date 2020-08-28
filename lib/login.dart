@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:facial_capture/home.dart';
-import 'package:facial_capture/services/auth.dart';
 import 'package:facial_capture/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -17,7 +16,6 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   bool _loading = false; 
   final _formKey = GlobalKey<FormState>(); 
-  final AuthService _auth = AuthService();
   String username = '';
   String password = ''; 
   String error = '';
@@ -25,6 +23,19 @@ class _LoginState extends State<Login> {
   // new edits 
   String url = ""; 
   var txt = TextEditingController();
+  var usernameController = TextEditingController();
+  var passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    url = "http://10.168.4.9:81";
+    txt.text = url; 
+    usernameController.text = "AFC";
+    username = usernameController.text;
+    passwordController.text = "password";
+    password = usernameController.text;
+  }
 
   _settings(context) {
      Alert(
@@ -64,6 +75,7 @@ class _LoginState extends State<Login> {
         )
       ]).show();
   }
+  
 
  @override
   Widget build(BuildContext context) {
@@ -147,6 +159,7 @@ class _LoginState extends State<Login> {
                                     border: Border(bottom: BorderSide(color: Colors.grey[200]))
                                   ),
                                   child: TextFormField(
+                                    controller: usernameController,
                                     validator: (val) => val.isEmpty ? "Enter a usename": null,
                                     decoration: InputDecoration(
                                       hintText: "Username ",
@@ -165,6 +178,7 @@ class _LoginState extends State<Login> {
                                   decoration: BoxDecoration(
                                   ),
                                   child: TextFormField(
+                                    controller: passwordController,
                                     obscureText: true,
                                     validator: (val) => val.isEmpty ? "Enter a password": null,
                                     decoration: InputDecoration(

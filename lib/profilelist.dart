@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
 
+import 'package:facial_capture/glob.dart';
 import 'package:facial_capture/home.dart';
 import 'package:facial_capture/main.dart';
 import 'package:facial_capture/models/count.dart';
@@ -18,8 +19,8 @@ import 'models/profile.dart';
 class ProfileList extends StatefulWidget {
   final List<Profile> profiles;
   final Filter filter; 
-  final String username;  
-  ProfileList({this.profiles, this.username, this.filter}); 
+  final String username, url;  
+  ProfileList({this.profiles, this.username, this.filter, this.url}); 
   // final String username; 
   // ProfileList({this.filter, this.username}); 
   @override
@@ -65,6 +66,7 @@ void _showEditPanel(Profile profile){
     profiles = this.widget.profiles ?? [];    
 
     int currentMillieseconds = int.parse(DateTime.now().millisecondsSinceEpoch.toString());
+    int totalCount = profiles.length; 
    
     if (widget.filter.processed) {
       profiles = profiles.where((i) => i.manual_temperature != 0.0).toList(); 
@@ -80,6 +82,16 @@ void _showEditPanel(Profile profile){
 
     if (widget.filter.datetime != 'default') {
       profiles = profiles.where((i) => int.parse(widget.filter.datetime) <= 60 ? (i.manual_datetime == 0 ? i.datetime : i.manual_datetime) >= currentMillieseconds - (int.parse(widget.filter.datetime)*60000) : (i.manual_datetime == 0 ? i.datetime : i.manual_datetime) >= int.parse(widget.filter.datetime) && (i.manual_datetime == 0 ? i.datetime : i.manual_datetime) <= int.parse(widget.filter.datetime) + 86400000).toList();
+    }
+
+    if (widget.filter.array == 'default') {
+      Glob().allCount = profiles.length;      
+    } else if  (widget.filter.array == '1') {
+      Glob().arrayCount1 = profiles.length; 
+      Glob().arrayCount2 = totalCount - profiles.length;
+    } else {
+      Glob().arrayCount2 = profiles.length; 
+      Glob().arrayCount1 = totalCount - profiles.length;
     }
     
         return Scrollbar(

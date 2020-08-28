@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:facial_capture/glob.dart';
 import 'package:facial_capture/login.dart';
 import 'package:facial_capture/models/filter.dart';
 import 'package:facial_capture/models/profile.dart';
 import 'package:facial_capture/profilelist.dart';
 import 'package:facial_capture/screens/dialogs/filterDialog.dart';
 import 'package:facial_capture/screens/dialogs/splitArray.dart';
-import 'package:facial_capture/services/auth.dart';
 import 'package:facial_capture/services/database.dart';
 import 'package:facial_capture/widgets/gradientAppBar.dart';
 import 'package:facial_capture/widgets/loading.dart';
@@ -26,8 +26,8 @@ import 'services/database.dart';
 
 
 class Home extends StatefulWidget {
-  final String username; 
-  Home({this.username});
+  final String username, url; 
+  Home({this.username, this.url});
   @override
   _HomeState createState() => _HomeState();
 }
@@ -43,6 +43,7 @@ class _HomeState extends State<Home> {
   String _username; 
   bool _showUsername = false;
   StreamController _profilesController;
+  StreamController _countController;
   // final myTransformer = ();
   Timer timer;
 
@@ -61,7 +62,8 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     _profilesController = BehaviorSubject(); 
-     timer = Timer.periodic(Duration(seconds: 1), (_) => loadDetails());
+    _countController = BehaviorSubject();
+     timer = Timer.periodic(Duration(seconds: 2), (_) => loadDetails());
     super.initState();
     getSharedPrefs().then((_) => setState(() {
         _username = _username; 
@@ -80,7 +82,9 @@ class _HomeState extends State<Home> {
         return res;
       });
     }
-    
+    if (!_countController.isClosed) {
+      _countController.add(Glob().allCount);
+    }
   }
 
   @override
@@ -88,6 +92,7 @@ class _HomeState extends State<Home> {
     super.dispose();
     timer.cancel();
     _profilesController.close();
+    _countController.close();
   }
 
   @override
@@ -213,20 +218,40 @@ class _HomeState extends State<Home> {
               Icons.people,
               size: 30,
               ), 
-            label: Text(
-              '-',
-              // _count.toString(),
-              // '-',
-              // _data.count.toString(),
-              // xyz.count.toString(),
-              // ct[0].toString(),
-              // ct.split('-').toList()[0],
-              style:TextStyle(
-                color: Colors.black,
-                fontSize: 25,
-                fontWeight: FontWeight.bold
-              )
-          )),
+               label: StreamBuilder(
+                    stream: _countController.stream,
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (snapshot.hasData) {
+                          return Text(
+                                snapshot.data.toString(),
+                                style:TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold
+                                )
+                            );
+                    
+                      }                
+                        if (snapshot.connectionState != ConnectionState.done) {
+                          return Text('-');
+                        }
+                    },
+                  ),
+          //   label: Text(
+          //     '-',
+          //     // _count.toString(),
+          //     // '-',
+          //     // _data.count.toString(),
+          //     // xyz.count.toString(),
+          //     // ct[0].toString(),
+          //     // ct.split('-').toList()[0],
+          //     style:TextStyle(
+          //       color: Colors.black,
+          //       fontSize: 25,
+          //       fontWeight: FontWeight.bold
+          //     )
+          // )
+          ),
         ),
       ]
     );
@@ -250,4 +275,3 @@ class _HomeState extends State<Home> {
 //     sc.add(updatedCount);
 //   }
 // }
-

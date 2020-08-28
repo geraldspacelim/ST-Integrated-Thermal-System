@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:facial_capture/models/profile.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -10,7 +9,7 @@ class DatabaseService {
 
   Future updateDatabaseST (Profile profile) async {
     final http.Response response = await http.post(
-      'http://http://10.168.4.9:81/API/imagesnap/UpdateTemperatureInfo',
+      'http://10.168.4.9:81/API/imagesnap/UpdateTemperatureInfo',
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -35,7 +34,7 @@ class DatabaseService {
 
 
   Future<List<Profile>> profileDataST() async {
-   final response =  await http.get('http://192.168.1.104:82/API/imagesnap/GetAllUserImages');
+   final response =  await http.get('http://10.168.4.9:81/API/imagesnap/GetAllUserImages');
     List profiles = jsonDecode(response.body);
     return profiles.map((profile) => new Profile(uid: profile['UserID'], 
                                                  name: profile['name'],
