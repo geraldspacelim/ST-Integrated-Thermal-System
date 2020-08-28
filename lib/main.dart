@@ -10,13 +10,13 @@ import 'package:facial_capture/screens/dialogs/splitArray.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:provider/provider.dart';
 
 void main() {
   _enablePlatformOverrideForDesktop();
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
-
   runApp(
     MyApp()
   );

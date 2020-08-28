@@ -89,7 +89,7 @@ class _SplitArrayState extends State<SplitArray> {
                       if (snapshot.hasData) {
                           List<Profile> profiles = snapshot.data;
                           // _count = profiles.length;
-                           return  ProfileList(filter: new Filter(array:"1", temperature:this.widget.filter.temperature,  datetime:this.widget.filter.datetime, processed:this.widget.filter.processed), profiles:profiles, username: this.widget.username);
+                           return  Flexible(child: ProfileList(filter: new Filter(array:"1", temperature:this.widget.filter.temperature,  datetime:this.widget.filter.datetime, processed:this.widget.filter.processed), profiles:profiles, username: this.widget.username));
                       } 
                         if (snapshot.connectionState != ConnectionState.done) {
                           return Center(child: CircularProgressIndicator());
@@ -111,7 +111,7 @@ class _SplitArrayState extends State<SplitArray> {
                       if (snapshot.hasData) {
                           List<Profile> profiles = snapshot.data;
                           // _count = profiles.length;
-                           return  ProfileList(filter: new Filter(array:"2", temperature:this.widget.filter.temperature,  datetime:this.widget.filter.datetime, processed:this.widget.filter.processed), profiles:profiles, username: this.widget.username);
+                           return  Flexible(child: ProfileList(filter: new Filter(array:"2", temperature:this.widget.filter.temperature,  datetime:this.widget.filter.datetime, processed:this.widget.filter.processed), profiles:profiles, username: this.widget.username));
                       } 
                         if (snapshot.connectionState != ConnectionState.done) {
                           return Center(child: CircularProgressIndicator());

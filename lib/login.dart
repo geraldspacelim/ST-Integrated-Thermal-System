@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:facial_capture/home.dart';
 import 'package:facial_capture/widgets/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -66,6 +67,7 @@ class _LoginState extends State<Login> {
             ),
           onPressed: () {
             // prefs.setString('url', url);
+            GlobalConfiguration().updateValue("ipaddress", url);
             Navigator.pop(context);
           },
           child: Text(
